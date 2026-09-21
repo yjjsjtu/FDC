@@ -158,7 +158,7 @@ def panel(
 
     draw.line((plot_left, plot_top, plot_left, plot_bottom), fill=AXIS, width=2)
     draw.line((plot_left, plot_bottom, plot_right, plot_bottom), fill=AXIS, width=2)
-    draw.text((left + 18, plot_top - 2), ylabel, font=FONT_SMALL, fill=MUTED)
+    draw.text((plot_left, plot_top - 26), ylabel, font=FONT_SMALL, fill=MUTED)
     time_label = "时间 / s"
     tw = draw.textbbox((0, 0), time_label, font=FONT_SMALL)[2]
     draw.text(((plot_left + plot_right - tw) / 2, bottom - 32), time_label, font=FONT_SMALL, fill=MUTED)
@@ -188,6 +188,23 @@ def panel(
         legend_x += 145
 
 
+def position_loop_sample_indices(time: np.ndarray, reference: np.ndarray) -> np.ndarray:
+    """Pick one log sample per position-loop update for readable error plots."""
+    if len(time) < 3:
+        return np.arange(len(time))
+    log_dt = float(np.median(np.diff(time)))
+    changed = np.flatnonzero(np.abs(np.diff(reference)) > 1.0e-12) + 1
+    if len(changed) >= 3:
+        stride = int(round(float(np.median(np.diff(changed)))))
+    else:
+        stride = int(round(0.001 / max(log_dt, 1.0e-12)))
+    stride = max(1, stride)
+    indices = np.arange(0, len(time), stride, dtype=int)
+    if indices[-1] != len(time) - 1:
+        indices = np.append(indices, len(time) - 1)
+    return indices
+
+
 def new_figure(title: str, subtitle: str) -> Image.Image:
     image = Image.new("RGB", (WIDTH, HEIGHT), BG)
     draw = ImageDraw.Draw(image)
@@ -211,16 +228,24 @@ def main() -> None:
     event = ((scenario["position_step_time_s"], "位置指令"),)
 
     position_error_deg = (data["position_ref_rev"] - data["position_rev"]) * 360.0
+    position_error_indices = position_loop_sample_indices(t, data["position_ref_rev"])
+    position_series = [
+        ("轨迹位置", data["position_ref_rev"], PURPLE),
+        ("实际位置", data["position_rev"], BLUE),
+    ]
+    if "command_position_rev" in data.dtype.names:
+        position_series.insert(0, ("命令位置", data["command_position_rev"], RED))
     image = new_figure(
         "图 1　位置环跟踪结果",
-        f"目标 0.25 rev；最终误差 {summary['final_position_error_rev']:.3e} rev；超调 {summary['overshoot_rev']*360:.2f}°",
+        f"目标 0.25 rev；最终误差 {summary['final_position_error_rev']:.3e} rev；"
+        f"超调 {summary['overshoot_rev']*360:.2f}°；误差按位置环采样显示",
     )
     panel(image, (45, 115, 1555, 525), t,
-          (("位置给定", data["position_ref_rev"], RED), ("实际位置", data["position_rev"], BLUE)),
-          "位置响应", "位置 / rev", load_shade, event)
-    panel(image, (45, 550, 1555, 955), t,
-          (("位置误差", position_error_deg, PURPLE),),
-          "位置误差", "误差 / °", load_shade, event, hlines=((0.0, AXIS, "零误差"),))
+          position_series,
+          "位置响应", "单位: rev", load_shade, event)
+    panel(image, (45, 550, 1555, 955), t[position_error_indices],
+          (("位置环采样误差", position_error_deg[position_error_indices], PURPLE),),
+          "位置误差", "单位: deg", load_shade, event, hlines=((0.0, AXIS, "零误差"),))
     save_figure(image, "01_position_tracking.png")
 
     speed_error = data["speed_ref_rev_s"] - data["speed_rev_s"]
@@ -273,9 +298,9 @@ def main() -> None:
           (("电磁转矩", data["torque_nm"], BLUE), ("负载转矩", data["load_nm"], ORANGE),
            ("估计负载", data["load_estimate_nm"], GREEN), ("运动前馈", data["motion_feedforward_nm"], PURPLE)),
           "电磁转矩与外部负载", "转矩 / N·m", load_shade, event)
-    panel(image, (45, 550, 1555, 955), t,
-          (("位置误差", position_error_deg, PURPLE), ("速度", data["speed_rev_s"], CYAN)),
-          "扰动期间的位置误差与速度", "误差 ° / 速度 rev/s", load_shade, event,
+    panel(image, (45, 550, 1555, 955), t[position_error_indices],
+          (("位置环采样误差", position_error_deg[position_error_indices], PURPLE),),
+          "扰动期间的位置误差", "单位: deg", load_shade, event,
           hlines=((0.0, AXIS, "零线"),))
     save_figure(image, "05_load_disturbance.png")
 
