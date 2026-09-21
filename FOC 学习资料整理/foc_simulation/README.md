@@ -118,7 +118,7 @@ python3 examples/run_rdrive_stress_scenarios.py
 - `rdrive_three_loop/output/stress/stress_metrics.json`：同一组指标的 JSON 版本。
 - `rdrive_three_loop/output/plots/07_stress_position_error.png`：复杂工况位置峰值/RMS 误差。
 - `rdrive_three_loop/output/plots/08_stress_current_voltage.png`：复杂工况峰值 Iq 和电压利用率。
-- `rdrive_three_loop/output/plots/09_stress_reverse_tracking.png`：多段反向目标下的位置和负载跟踪。
-- `rdrive_three_loop/output/plots/10_stress_sine_load_tracking.png`：正弦负载扰动下的位置和负载跟踪。
+- `rdrive_three_loop/output/plots/09_stress_reverse_tracking.png`：多段反向目标下的位置、位置环采样误差和负载跟踪。
+- `rdrive_three_loop/output/plots/10_stress_sine_load_tracking.png`：正弦负载扰动下的位置、位置环采样误差和负载跟踪。
 
 说明文档见 `docs/RDrive三环仿真迁移说明.md`。

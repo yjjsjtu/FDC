@@ -51,8 +51,8 @@ python stress_scenarios.py
 - `output/stress/stress_metrics.json`：同一组指标的 JSON 版本。
 - `output/plots/07_stress_position_error.png`：用柱状图比较各工况位置误差。
 - `output/plots/08_stress_current_voltage.png`：比较峰值 Iq 和 SVPWM 电压利用率。
-- `output/plots/09_stress_reverse_tracking.png`：多段反向工况的位置跟踪细节。
-- `output/plots/10_stress_sine_load_tracking.png`：正弦扰动负载下的位置和负载跟踪细节。
+- `output/plots/09_stress_reverse_tracking.png`：多段反向工况的位置、位置环采样误差和负载跟踪细节。
+- `output/plots/10_stress_sine_load_tracking.png`：正弦扰动负载下的位置、位置环采样误差和负载跟踪细节。
 
 指定其他配置或输出目录：
 

@@ -108,7 +108,7 @@ def _draw_axes(
             draw.text((x - 16, bottom + 10), f"{value:.2f}", font=FONT_SMALL, fill=MUTED)
     draw.line((left, top, left, bottom), fill=AXIS, width=2)
     draw.line((left, bottom, right, bottom), fill=AXIS, width=2)
-    draw.text((left - 90, top - 4), ylabel, font=FONT_SMALL, fill=MUTED)
+    draw.text((left, top - 26), ylabel, font=FONT_SMALL, fill=MUTED)
 
     def sx(value: float) -> float:
         return left + (value - xmin) / max(1e-12, xmax - xmin) * (right - left)
@@ -132,6 +132,8 @@ def _draw_line_chart(
     y_values = np.concatenate([values for _, values, _ in series])
     ymin, ymax = _nice_range(y_values)
     sx, sy = _draw_axes(draw, area, float(time[0]), float(time[-1]), ymin, ymax, ylabel)
+    if ymin < 0.0 < ymax:
+        draw.line((area[0], sy(0.0), area[2], sy(0.0)), fill=AXIS, width=1)
     step = max(1, len(time) // 2200)
     legend_x = area[0] + 12
     for name, values, color in series:
@@ -141,6 +143,25 @@ def _draw_line_chart(
         draw.line((legend_x, area[1] + 20, legend_x + 30, area[1] + 20), fill=color, width=4)
         draw.text((legend_x + 38, area[1] + 8), name, font=FONT_SMALL, fill=TEXT)
         legend_x += 175
+
+
+def _position_loop_sample_indices(result: Dict[str, np.ndarray]) -> np.ndarray:
+    """Pick one log sample per position-loop update to avoid drawing aliasing."""
+    time = result["time_s"]
+    if len(time) < 3:
+        return np.arange(len(time))
+    log_dt = float(np.median(np.diff(time)))
+    ref = result["position_ref_rev"]
+    changed = np.flatnonzero(np.abs(np.diff(ref)) > 1.0e-12) + 1
+    if len(changed) >= 3:
+        stride = int(round(float(np.median(np.diff(changed)))))
+    else:
+        stride = int(round(0.001 / max(log_dt, 1.0e-12)))
+    stride = max(1, stride)
+    indices = np.arange(0, len(time), stride, dtype=int)
+    if indices[-1] != len(time) - 1:
+        indices = np.append(indices, len(time) - 1)
+    return indices
 
 
 def _draw_bar_chart(
@@ -330,20 +351,21 @@ def _plot_selected_timeseries(case_data: Dict[str, Tuple[Dict[str, np.ndarray], 
         result, summary = case_data[name]
         t = result["time_s"]
         position_error_deg = (result["position_ref_rev"] - result["position_rev"]) * 360.0
-        image = Image.new("RGB", (WIDTH, HEIGHT), BG)
+        sampled = _position_loop_sample_indices(result)
+        image = Image.new("RGB", (WIDTH, 1120), BG)
         draw = ImageDraw.Draw(image)
         draw.text((55, 28), f"图 9　{title}跟踪结果" if name == "reverse_multi_step" else f"图 10　{title}跟踪结果", font=FONT_TITLE, fill=TEXT)
         draw.text(
             (57, 76),
-            f"峰值误差 {summary['position_peak_error_deg']:.2f}°；RMS 误差 {summary['position_rms_error_deg']:.2f}°；峰值 Iq {summary['max_abs_iq_a']:.2f} A",
+            f"峰值误差 {summary['position_peak_error_deg']:.2f}°；RMS 误差 {summary['position_rms_error_deg']:.2f}°；峰值 Iq {summary['max_abs_iq_a']:.2f} A；误差按位置环采样显示",
             font=FONT_BODY,
             fill=MUTED,
         )
         _draw_line_chart(
             image,
-            (45, 120, 1555, 520),
+            (45, 120, 1555, 465),
             "位置参考与实际位置",
-            "位置 / rev",
+            "单位: rev",
             t,
             [
                 ("命令位置", result["command_position_rev"], RED),
@@ -353,12 +375,21 @@ def _plot_selected_timeseries(case_data: Dict[str, Tuple[Dict[str, np.ndarray], 
         )
         _draw_line_chart(
             image,
-            (45, 555, 1555, 955),
-            "位置误差与负载扰动",
-            "误差 ° / 负载 N·m",
+            (45, 500, 1555, 790),
+            "位置误差",
+            "单位: deg",
+            t[sampled],
+            [
+                ("位置环采样误差", position_error_deg[sampled], PURPLE),
+            ],
+        )
+        _draw_line_chart(
+            image,
+            (45, 825, 1555, 1090),
+            "负载扰动与观测",
+            "单位: N*m",
             t,
             [
-                ("位置误差", position_error_deg, PURPLE),
                 ("负载转矩", result["load_nm"], ORANGE),
                 ("估计负载", result["load_estimate_nm"], GREEN),
             ],

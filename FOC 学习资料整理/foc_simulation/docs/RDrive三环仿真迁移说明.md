@@ -59,8 +59,8 @@ rdrive_three_loop/output/
 - `stress/stress_metrics.json`：复杂工况指标 JSON。
 - `plots/07_stress_position_error.png`：各工况位置峰值误差和 RMS 误差。
 - `plots/08_stress_current_voltage.png`：各工况峰值 Iq 和电压利用率。
-- `plots/09_stress_reverse_tracking.png`：多段反向目标的跟踪细节。
-- `plots/10_stress_sine_load_tracking.png`：正弦扰动负载下的跟踪细节。
+- `plots/09_stress_reverse_tracking.png`：多段反向目标的位置、位置环采样误差和负载跟踪细节。
+- `plots/10_stress_sine_load_tracking.png`：正弦扰动负载下的位置、位置环采样误差和负载跟踪细节。
 
 ## 与本机教学仿真的区别
 
