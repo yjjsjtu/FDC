@@ -96,6 +96,7 @@ rdrive_three_loop/  从 three_loop_sim 迁移来的 RDrive/moteus 风格三环�
 - 位置 P、速度 PI、d/q 电流 PI 级联。
 - D 轴优先电压限幅、共模注入 SVPWM。
 - 负载扰动观测器，用来减小加载/卸载位置偏差。
+- 惯性与摩擦前馈，用 `J*a + B*w + Fc*tanh(w/eps)` 折算成 q 轴电流补偿。
 
 运行：
 

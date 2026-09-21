@@ -30,6 +30,11 @@ class RDriveThreeLoopMigrationTests(unittest.TestCase):
             self.summary["allowed_voltage_vector_v"] + 1.0e-9,
         )
 
+    def test_migrated_motion_feedforward_is_logged(self) -> None:
+        self.assertGreater(self.summary["max_abs_motion_feedforward_nm"], 0.0)
+        self.assertIn("inertia_feedforward_nm", self.result)
+        self.assertIn("friction_feedforward_nm", self.result)
+
     def test_migrated_outputs_are_finite(self) -> None:
         for values in self.result.values():
             self.assertTrue((abs(values) < 1.0e9).all())

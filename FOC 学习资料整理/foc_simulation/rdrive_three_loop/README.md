@@ -56,6 +56,7 @@ python simulate.py --config config.json --output my_output
 - 轨迹速度沿 `sqrt(2*a*距离)` 制动包络运行，并在离散跨越目标时精确吸附，避免参考轨迹自身超调。
 - 速度环包含低通负载扰动观测器，将估计负载转换为 `Iq` 前馈，减小加载与撤载时的位置偏差。
 - PMSM 使用 D/Q 动态方程，包含电阻、电感、反电动势、惯量、摩擦和外部负载。
+- 电机模型增加库仑摩擦，速度环加入 `J*a + B*w + Fc*tanh(w/eps)` 运动模型前馈，用来补偿加减速惯量和摩擦转矩。
 
 ## 三个环的调参入口
 
@@ -66,6 +67,8 @@ python simulate.py --config config.json --output my_output
 3. 电流环：`current_kp_v_per_a`、`current_ki_v_per_a_s`
 
 负载观测器由 `enable_load_disturbance_observer`、`disturbance_observer_bandwidth_hz` 和 `disturbance_observer_torque_limit_nm` 配置。真实编码器存在噪声时应降低观测器带宽，并先验证速度微分噪声。
+
+惯性与摩擦补偿由 `enable_inertia_feedforward`、`enable_friction_feedforward`、`inertia_feedforward_kg_m2`、`viscous_friction_feedforward_nm_per_rad_s`、`coulomb_friction_feedforward_nm` 配置。当前默认值等于仿真电机参数，相当于“已经准确辨识出 J/B/Fc”的理想补偿。
 
 建议按“电流环 -> 速度环 -> 位置环”的顺序调节。内环带宽必须显著高于外环；当前多速率配置为电流环 30 kHz、速度环 3 kHz、位置环 1 kHz。
 

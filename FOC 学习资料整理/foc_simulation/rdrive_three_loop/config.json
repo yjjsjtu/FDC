@@ -14,7 +14,9 @@
     "q_inductance_h": 0.0000286,
     "flux_linkage_wb": 0.00260062,
     "inertia_kg_m2": 0.000056,
-    "viscous_friction_nm_per_rad_s": 0.00003
+    "viscous_friction_nm_per_rad_s": 0.00003,
+    "coulomb_friction_nm": 0.003,
+    "friction_smoothing_rad_s": 0.2
   },
   "inverter": {
     "bus_voltage_v": 24.0,
@@ -30,6 +32,14 @@
     "speed_limit_rev_s": 2.0,
     "acceleration_limit_rev_s2": 12.0,
     "current_reference_slew_a_s": 10000.0,
+    "enable_inertia_feedforward": true,
+    "inertia_feedforward_kg_m2": 0.000056,
+    "inertia_feedforward_scale": 1.0,
+    "enable_friction_feedforward": true,
+    "viscous_friction_feedforward_nm_per_rad_s": 0.00003,
+    "coulomb_friction_feedforward_nm": 0.003,
+    "friction_feedforward_smoothing_rad_s": 0.2,
+    "friction_feedforward_scale": 1.0,
     "enable_resistance_feedforward": true,
     "enable_bemf_feedforward": true,
     "enable_cross_coupling_feedforward": true,

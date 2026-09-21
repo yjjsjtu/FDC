@@ -38,6 +38,11 @@ class ThreeLoopSimulationTest(unittest.TestCase):
             self.summary["allowed_voltage_vector_v"] + 1e-9,
         )
 
+    def test_motion_feedforward_is_active(self):
+        self.assertGreater(self.summary["max_abs_inertia_feedforward_nm"], 0.0)
+        self.assertGreater(self.summary["max_abs_friction_feedforward_nm"], 0.0)
+        self.assertIn("motion_feedforward_nm", self.result)
+
     def test_simulation_remains_finite(self):
         for values in self.result.values():
             self.assertTrue((abs(values) < 1e9).all())

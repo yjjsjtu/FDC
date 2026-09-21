@@ -49,7 +49,18 @@ rdrive_three_loop/output/
 
 ## 与本机教学仿真的区别
 
-`rdrive_three_loop` 更像硬件固件参考仿真，参数来自 RDrive/moteus 方向，包含 30 kHz 电流环、多速率位置/速度/电流级联、D 轴优先电压限幅、共模注入 SVPWM 和负载扰动观测器。
+`rdrive_three_loop` 更像硬件固件参考仿真，参数来自 RDrive/moteus 方向，包含 30 kHz 电流环、多速率位置/速度/电流级联、D 轴优先电压限幅、共模注入 SVPWM、负载扰动观测器，以及惯性/摩擦前馈补偿。
+
+惯性与摩擦补偿使用：
+
+```text
+tau_ff = J_hat * acceleration_ref
+       + B_hat * velocity_ref
+       + Fc_hat * tanh(velocity_ref / eps)
+Iq_ff = tau_ff / Kt
+```
+
+其中 `J_hat`、`B_hat`、`Fc_hat` 当前取自 `config.json`，默认等于仿真电机模型参数。第 6 张输出图 `06_friction_inertia_feedforward.png` 会显示惯性前馈、摩擦前馈、合计前馈以及折算后的 q 轴电流。
 
 原有 `src/` 与 `examples/` 更偏教学和周报展示，覆盖 Clarke/Park、显式 SVPWM 扇区、电阻电感辨识、摩擦惯性辨识、补偿验证和控制优化对比。
 

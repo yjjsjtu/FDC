@@ -65,6 +65,8 @@ class SpmsmPlant:
         self.flux = float(cfg["flux_linkage_wb"])
         self.j = float(cfg["inertia_kg_m2"])
         self.b = float(cfg["viscous_friction_nm_per_rad_s"])
+        self.fc = float(cfg.get("coulomb_friction_nm", 0.0))
+        self.friction_smoothing = float(cfg.get("friction_smoothing_rad_s", 0.2))
         self.state = MotorState()
 
     @property
@@ -88,7 +90,8 @@ class SpmsmPlant:
         torque = 1.5 * self.p * (
             self.flux * i_q + (self.ld - self.lq) * i_d * i_q
         )
-        domega = (torque - load_nm - self.b * omega) / self.j
+        friction = self.b * omega + self.fc * math.tanh(omega / self.friction_smoothing)
+        domega = (torque - load_nm - friction) / self.j
         return np.array([omega, domega, did, diq], dtype=float)
 
     def step(self, vd: float, vq: float, load_nm: float, dt: float, substeps: int) -> None:
@@ -121,12 +124,14 @@ class MotionProfile:
         self.max_accel = max_accel
         self.position = 0.0
         self.velocity = 0.0
+        self.acceleration = 0.0
 
     def update(self, target_position: float, dt: float) -> Tuple[float, float]:
         error = target_position - self.position
         if abs(error) < 1e-12 and abs(self.velocity) < self.max_accel * dt:
             self.position = target_position
             self.velocity = 0.0
+            self.acceleration = 0.0
             return self.position, self.velocity
         direction = 1.0 if error >= 0.0 else -1.0
         # The ideal speed which can still stop exactly at the target is
@@ -141,6 +146,7 @@ class MotionProfile:
         )
         old_velocity = self.velocity
         self.velocity = clamp(self.velocity + velocity_delta, -self.max_speed, self.max_speed)
+        self.acceleration = (self.velocity - old_velocity) / dt
         self.position += 0.5 * (old_velocity + self.velocity) * dt
 
         # Enforce an exact terminal state if the discrete integration crosses the
@@ -149,7 +155,20 @@ class MotionProfile:
         if error != 0.0 and error * new_error <= 0.0:
             self.position = target_position
             self.velocity = 0.0
+            self.acceleration = 0.0
         return self.position, self.velocity
+
+
+def friction_feedforward_torque(
+    velocity_rad_s: float,
+    viscous_nm_per_rad_s: float,
+    coulomb_nm: float,
+    smoothing_rad_s: float,
+) -> float:
+    return (
+        viscous_nm_per_rad_s * velocity_rad_s
+        + coulomb_nm * math.tanh(velocity_rad_s / smoothing_rad_s)
+    )
 
 
 def limit_dq_voltage(vd: float, vq: float, max_voltage: float) -> Tuple[float, float, bool]:
@@ -215,6 +234,9 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
     vd = 0.0
     vq = 0.0
     estimated_load_nm = 0.0
+    inertia_ff_nm = 0.0
+    friction_ff_nm = 0.0
+    motion_ff_nm = 0.0
     previous_speed_sample = 0.0
     observer_alpha = 1.0 - math.exp(
         -TWO_PI * float(ctl.get("disturbance_observer_bandwidth_hz", 80.0)) * speed_dt
@@ -224,6 +246,7 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
         "time_s", "position_ref_rev", "position_rev", "speed_ref_rev_s",
         "speed_rev_s", "id_ref_a", "id_a", "iq_ref_a", "iq_a",
         "vd_v", "vq_v", "torque_nm", "load_nm", "load_estimate_nm",
+        "inertia_feedforward_nm", "friction_feedforward_nm", "motion_feedforward_nm",
         "duty_a", "duty_b", "duty_c"
     )}
 
@@ -260,14 +283,32 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
 
             speed_error = speed_ref - plant.state.omega_m_rad_s
             load_iq_feedforward = estimated_load_nm / plant.torque_constant_nm_a
+            inertia_ff_nm = 0.0
+            if ctl.get("enable_inertia_feedforward", False):
+                inertia = float(ctl.get("inertia_feedforward_kg_m2", plant.j))
+                inertia_ff_nm = (
+                    float(ctl.get("inertia_feedforward_scale", 1.0))
+                    * inertia
+                    * profile.acceleration
+                )
+            friction_ff_nm = 0.0
+            if ctl.get("enable_friction_feedforward", False):
+                friction_ff_nm = float(ctl.get("friction_feedforward_scale", 1.0)) * friction_feedforward_torque(
+                    speed_ref,
+                    float(ctl.get("viscous_friction_feedforward_nm_per_rad_s", plant.b)),
+                    float(ctl.get("coulomb_friction_feedforward_nm", plant.fc)),
+                    float(ctl.get("friction_feedforward_smoothing_rad_s", plant.friction_smoothing)),
+                )
+            motion_ff_nm = inertia_ff_nm + friction_ff_nm
+            motion_iq_feedforward = motion_ff_nm / plant.torque_constant_nm_a
             raw_iq_feedback = speed_pi.update(speed_error, speed_dt)
-            raw_iq = raw_iq_feedback + load_iq_feedforward
+            raw_iq = raw_iq_feedback + load_iq_feedforward + motion_iq_feedforward
             iq_ref_target = clamp(raw_iq, -current_limit, current_limit)
             speed_pi.commit_with_back_calculation(
                 speed_error,
                 speed_dt,
                 raw_iq_feedback,
-                iq_ref_target - load_iq_feedforward,
+                iq_ref_target - load_iq_feedforward - motion_iq_feedforward,
             )
 
         max_iq_step = float(ctl["current_reference_slew_a_s"]) * dt
@@ -318,6 +359,9 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
                 "torque_nm": plant.torque_nm,
                 "load_nm": load_nm,
                 "load_estimate_nm": estimated_load_nm,
+                "inertia_feedforward_nm": inertia_ff_nm,
+                "friction_feedforward_nm": friction_ff_nm,
+                "motion_feedforward_nm": motion_ff_nm,
                 "duty_a": duty_a,
                 "duty_b": duty_b,
                 "duty_c": duty_c,
@@ -352,6 +396,9 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
         "max_voltage_vector_v": float(np.max(np.hypot(result["vd_v"], result["vq_v"]))),
         "allowed_voltage_vector_v": max_voltage,
         "voltage_saturation_fraction": saturation_count / (steps + 1),
+        "max_abs_inertia_feedforward_nm": float(np.max(np.abs(result["inertia_feedforward_nm"]))),
+        "max_abs_friction_feedforward_nm": float(np.max(np.abs(result["friction_feedforward_nm"]))),
+        "max_abs_motion_feedforward_nm": float(np.max(np.abs(result["motion_feedforward_nm"]))),
         "post_load_recovery_error_rev": recovery_error,
         "move_peak_error_deg": peak_error(float(scenario["position_step_time_s"]), float(scenario["load_start_s"])),
         "load_peak_error_deg": peak_error(float(scenario["load_start_s"]), float(scenario["load_end_s"])),
@@ -393,7 +440,7 @@ def write_svg(path: Path, result: Dict[str, np.ndarray], summary: Dict[str, floa
     pieces = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" fill="#ffffff"/>',
-        '<style>text{font-family:"Microsoft YaHei",Arial,sans-serif;fill:#172033}.title{font-size:24px;font-weight:700}.label{font-size:14px}.small{font-size:12px}</style>',
+        '<style>text{font-family:"Noto Sans CJK SC","Noto Sans CJK","Microsoft YaHei",Arial,sans-serif;fill:#172033}.title{font-size:24px;font-weight:700}.label{font-size:14px}.small{font-size:12px}</style>',
         '<text x="60" y="38" class="title">RDrive / moteus 三环 FOC 仿真</text>',
         f'<text x="60" y="64" class="label">最终误差 {summary["final_position_error_rev"]:.6f} rev　峰值 Iq {summary["max_abs_iq_a"]:.2f} A　电压饱和占比 {100*summary["voltage_saturation_fraction"]:.2f}%</text>',
     ]

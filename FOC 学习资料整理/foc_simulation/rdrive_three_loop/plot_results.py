@@ -31,11 +31,27 @@ CYAN = "#0891b2"
 
 
 def load_font(size: int, bold: bool = False):
-    candidates = [
-        Path("C:/Windows/Fonts/msyhbd.ttc" if bold else "C:/Windows/Fonts/msyh.ttc"),
+    regular_candidates = [
+        Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
+        Path("/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf"),
+        Path("/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"),
+        Path("/usr/share/fonts/truetype/arphic/uming.ttc"),
+        Path("C:/Windows/Fonts/msyh.ttc"),
         Path("C:/Windows/Fonts/simhei.ttf"),
-        Path("C:/Windows/Fonts/arialbd.ttf" if bold else "C:/Windows/Fonts/arial.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        Path("C:/Windows/Fonts/arial.ttf"),
     ]
+    bold_candidates = [
+        Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"),
+        Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
+        Path("/usr/share/fonts/truetype/droid/DroidSansFallbackFull.ttf"),
+        Path("/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"),
+        Path("C:/Windows/Fonts/msyhbd.ttc"),
+        Path("C:/Windows/Fonts/simhei.ttf"),
+        Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        Path("C:/Windows/Fonts/arialbd.ttf"),
+    ]
+    candidates = bold_candidates if bold else regular_candidates
     for candidate in candidates:
         if candidate.exists():
             return ImageFont.truetype(str(candidate), size=size)
@@ -255,13 +271,31 @@ def main() -> None:
     )
     panel(image, (45, 115, 1555, 525), t,
           (("电磁转矩", data["torque_nm"], BLUE), ("负载转矩", data["load_nm"], ORANGE),
-           ("估计负载", data["load_estimate_nm"], GREEN)),
+           ("估计负载", data["load_estimate_nm"], GREEN), ("运动前馈", data["motion_feedforward_nm"], PURPLE)),
           "电磁转矩与外部负载", "转矩 / N·m", load_shade, event)
     panel(image, (45, 550, 1555, 955), t,
           (("位置误差", position_error_deg, PURPLE), ("速度", data["speed_rev_s"], CYAN)),
           "扰动期间的位置误差与速度", "误差 ° / 速度 rev/s", load_shade, event,
           hlines=((0.0, AXIS, "零线"),))
     save_figure(image, "05_load_disturbance.png")
+
+    image = new_figure(
+        "图 6　惯性与摩擦前馈补偿",
+        f"峰值惯性前馈 {summary['max_abs_inertia_feedforward_nm']:.4f} N·m；"
+        f"峰值摩擦前馈 {summary['max_abs_friction_feedforward_nm']:.4f} N·m",
+    )
+    panel(image, (45, 115, 1555, 525), t,
+          (("惯性前馈", data["inertia_feedforward_nm"], BLUE),
+           ("摩擦前馈", data["friction_feedforward_nm"], GREEN),
+           ("合计前馈", data["motion_feedforward_nm"], PURPLE)),
+          "运动模型前馈转矩", "转矩 / N·m", load_shade, event,
+          hlines=((0.0, AXIS, "零线"),))
+    motion_iq = data["motion_feedforward_nm"] / config["motor"]["flux_linkage_wb"] / (1.5 * config["motor"]["pole_pairs"])
+    panel(image, (45, 550, 1555, 955), t,
+          (("Iq 给定", data["iq_ref_a"], RED), ("运动前馈 Iq", motion_iq, CYAN), ("Iq 实际", data["iq_a"], BLUE)),
+          "前馈折算到 q 轴电流", "电流 / A", load_shade, event,
+          hlines=((0.0, AXIS, "零线"),))
+    save_figure(image, "06_friction_inertia_feedforward.png")
 
     for path in sorted(PLOT_DIR.glob("*.png")):
         print(path)
