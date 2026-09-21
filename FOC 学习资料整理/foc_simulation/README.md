@@ -17,6 +17,7 @@ python3 examples/run_compensation_compare.py
 python3 examples/run_control_optimization_compare.py
 python3 examples/run_position_three_loop.py
 python3 examples/run_rdrive_three_loop.py
+python3 examples/run_rdrive_stress_scenarios.py
 python3 -m unittest discover -s tests
 ```
 
@@ -51,6 +52,7 @@ examples/
   run_control_optimization_compare.py
   run_position_three_loop.py
   run_rdrive_three_loop.py
+  run_rdrive_stress_scenarios.py
 tests/
 docs/
 data/
@@ -103,5 +105,20 @@ rdrive_three_loop/  从 three_loop_sim 迁移来的 RDrive/moteus 风格三环�
 ```bash
 python3 examples/run_rdrive_three_loop.py
 ```
+
+复杂工况压力测试：
+
+```bash
+python3 examples/run_rdrive_stress_scenarios.py
+```
+
+压力测试会覆盖基准、有/无惯性摩擦前馈、高速大行程、强负载、惯量失配、摩擦失配、多段反向和正弦扰动负载。新增输出位于：
+
+- `rdrive_three_loop/output/stress/stress_summary.csv`：每组工况的误差、电流、电压利用率和是否通过。
+- `rdrive_three_loop/output/stress/stress_metrics.json`：同一组指标的 JSON 版本。
+- `rdrive_three_loop/output/plots/07_stress_position_error.png`：复杂工况位置峰值/RMS 误差。
+- `rdrive_three_loop/output/plots/08_stress_current_voltage.png`：复杂工况峰值 Iq 和电压利用率。
+- `rdrive_three_loop/output/plots/09_stress_reverse_tracking.png`：多段反向目标下的位置和负载跟踪。
+- `rdrive_three_loop/output/plots/10_stress_sine_load_tracking.png`：正弦负载扰动下的位置和负载跟踪。
 
 说明文档见 `docs/RDrive三环仿真迁移说明.md`。

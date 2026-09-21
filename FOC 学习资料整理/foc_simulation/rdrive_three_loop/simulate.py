@@ -195,6 +195,71 @@ def dq_to_phase_and_pwm(
     return va, vb, vc, duties[0], duties[1], duties[2]
 
 
+def target_position_rev_at(scenario: Dict, time_s: float) -> float:
+    """Piecewise-constant commanded target position in revolutions."""
+    events = scenario.get("target_events_rev")
+    if events:
+        target = 0.0
+        for event_time, event_target in sorted(events, key=lambda item: float(item[0])):
+            if time_s >= float(event_time):
+                target = float(event_target)
+            else:
+                break
+        return target
+    return (
+        float(scenario["target_position_rev"])
+        if time_s >= float(scenario["position_step_time_s"])
+        else 0.0
+    )
+
+
+def load_torque_nm_at(scenario: Dict, time_s: float) -> float:
+    """External load torque, supporting rectangular and sinusoidal disturbances."""
+    load_nm = 0.0
+    events = scenario.get("load_events_nm")
+    if events:
+        for start_s, end_s, torque_nm in events:
+            if float(start_s) <= time_s < float(end_s):
+                load_nm += float(torque_nm)
+    elif "load_torque_nm" in scenario:
+        if float(scenario["load_start_s"]) <= time_s < float(scenario["load_end_s"]):
+            load_nm += float(scenario["load_torque_nm"])
+
+    sine = scenario.get("load_sine_nm")
+    if sine:
+        start_s = float(sine.get("start_s", 0.0))
+        end_s = float(sine.get("end_s", time_s + 1.0))
+        if start_s <= time_s < end_s:
+            phase = float(sine.get("phase_rad", 0.0))
+            load_nm += float(sine.get("offset_nm", 0.0))
+            load_nm += float(sine["amplitude_nm"]) * math.sin(
+                TWO_PI * float(sine["frequency_hz"]) * (time_s - start_s) + phase
+            )
+    return load_nm
+
+
+def first_target_time_s(scenario: Dict) -> float:
+    events = scenario.get("target_events_rev")
+    if events:
+        return min(float(item[0]) for item in events)
+    return float(scenario["position_step_time_s"])
+
+
+def load_interval_s(scenario: Dict) -> Tuple[float, float]:
+    intervals: List[Tuple[float, float]] = []
+    events = scenario.get("load_events_nm")
+    if events:
+        intervals.extend((float(start_s), float(end_s)) for start_s, end_s, _ in events)
+    elif "load_start_s" in scenario and "load_end_s" in scenario:
+        intervals.append((float(scenario["load_start_s"]), float(scenario["load_end_s"])))
+    sine = scenario.get("load_sine_nm")
+    if sine:
+        intervals.append((float(sine.get("start_s", 0.0)), float(sine["end_s"])))
+    if not intervals:
+        return 0.0, 0.0
+    return min(start for start, _ in intervals), max(end for _, end in intervals)
+
+
 def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
     sim = config["simulation"]
     inv = config["inverter"]
@@ -243,7 +308,7 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
     )
     saturation_count = 0
     log: Dict[str, List[float]] = {name: [] for name in (
-        "time_s", "position_ref_rev", "position_rev", "speed_ref_rev_s",
+        "time_s", "command_position_rev", "position_ref_rev", "position_rev", "speed_ref_rev_s",
         "speed_rev_s", "id_ref_a", "id_a", "iq_ref_a", "iq_a",
         "vd_v", "vq_v", "torque_nm", "load_nm", "load_estimate_nm",
         "inertia_feedforward_nm", "friction_feedforward_nm", "motion_feedforward_nm",
@@ -252,7 +317,7 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
 
     for step in range(steps + 1):
         t = step * dt
-        target_rev = float(scenario["target_position_rev"]) if t >= float(scenario["position_step_time_s"]) else 0.0
+        target_rev = target_position_rev_at(scenario, t)
         target_rad = target_rev * TWO_PI
 
         if step % position_div == 0:
@@ -335,17 +400,14 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
         id_pi.commit_with_back_calculation(id_error, dt, raw_vd, vd)
         iq_pi.commit_with_back_calculation(iq_error, dt, raw_vq, vq)
 
-        load_nm = (
-            float(scenario["load_torque_nm"])
-            if float(scenario["load_start_s"]) <= t < float(scenario["load_end_s"])
-            else 0.0
-        )
+        load_nm = load_torque_nm_at(scenario, t)
         electrical_angle = (plant.p * plant.state.theta_m_rad) % TWO_PI
         _, _, _, duty_a, duty_b, duty_c = dq_to_phase_and_pwm(vd, vq, electrical_angle, bus_v)
 
         if step % log_div == 0:
             values = {
                 "time_s": t,
+                "command_position_rev": target_rev,
                 "position_ref_rev": profile.position / TWO_PI,
                 "position_rev": plant.state.theta_m_rad / TWO_PI,
                 "speed_ref_rev_s": speed_ref / TWO_PI,
@@ -375,21 +437,31 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
     result = {key: np.asarray(value, dtype=float) for key, value in log.items()}
     time = result["time_s"]
     pos = result["position_rev"]
-    final_target = float(scenario["target_position_rev"])
-    after_step = time >= float(scenario["position_step_time_s"])
-    overshoot = max(0.0, float(np.max(pos[after_step]) - final_target))
+    final_target = target_position_rev_at(scenario, float(time[-1]))
+    after_step = time >= first_target_time_s(scenario)
+    overshoot = 0.0
+    if np.any(after_step):
+        if final_target >= 0.0:
+            overshoot = max(0.0, float(np.max(pos[after_step]) - final_target))
+        else:
+            overshoot = max(0.0, float(final_target - np.min(pos[after_step])))
     final_error = float(final_target - pos[-1])
-    load_end = float(scenario["load_end_s"])
+    load_start, load_end = load_interval_s(scenario)
     recovery_mask = time >= min(load_end + 0.15, float(sim["duration_s"]) - 0.05)
     recovery_error = float(np.max(np.abs(pos[recovery_mask] - final_target)))
     position_error_deg = (result["position_ref_rev"] - pos) * 360.0
     def peak_error(start: float, end: float) -> float:
         mask = (time >= start) & (time < end)
+        if not np.any(mask):
+            return 0.0
         return float(np.max(np.abs(position_error_deg[mask])))
     summary = {
         "final_position_rev": float(pos[-1]),
         "final_position_error_rev": final_error,
         "overshoot_rev": overshoot,
+        "position_rms_error_deg": float(np.sqrt(np.mean(position_error_deg * position_error_deg))),
+        "position_peak_error_deg": float(np.max(np.abs(position_error_deg))),
+        "speed_rms_error_rev_s": float(np.sqrt(np.mean((result["speed_ref_rev_s"] - result["speed_rev_s"]) ** 2))),
         "max_abs_speed_rev_s": float(np.max(np.abs(result["speed_rev_s"]))),
         "max_abs_iq_a": float(np.max(np.abs(result["iq_a"]))),
         "max_abs_id_a": float(np.max(np.abs(result["id_a"]))),
@@ -400,9 +472,9 @@ def simulate(config: Dict) -> Tuple[Dict[str, np.ndarray], Dict[str, float]]:
         "max_abs_friction_feedforward_nm": float(np.max(np.abs(result["friction_feedforward_nm"]))),
         "max_abs_motion_feedforward_nm": float(np.max(np.abs(result["motion_feedforward_nm"]))),
         "post_load_recovery_error_rev": recovery_error,
-        "move_peak_error_deg": peak_error(float(scenario["position_step_time_s"]), float(scenario["load_start_s"])),
-        "load_peak_error_deg": peak_error(float(scenario["load_start_s"]), float(scenario["load_end_s"])),
-        "unload_peak_error_deg": peak_error(float(scenario["load_end_s"]), min(float(sim["duration_s"]), float(scenario["load_end_s"]) + 0.2)),
+        "move_peak_error_deg": peak_error(first_target_time_s(scenario), load_start if load_start else float(sim["duration_s"])),
+        "load_peak_error_deg": peak_error(load_start, load_end),
+        "unload_peak_error_deg": peak_error(load_end, min(float(sim["duration_s"]), load_end + 0.2)),
         "reference_overshoot_deg": max(0.0, float(np.max(result["position_ref_rev"]) - final_target) * 360.0),
         "torque_constant_nm_a": plant.torque_constant_nm_a,
     }

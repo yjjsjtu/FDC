@@ -39,6 +39,21 @@ python -m unittest -v test_simulation.py
 python plot_results.py
 ```
 
+运行复杂工况压力测试：
+
+```powershell
+python stress_scenarios.py
+```
+
+压力测试会自动生成 8 组仿真，包括基准、有/无运动前馈、高速大行程、强负载、惯量失配、摩擦失配、多段反向和正弦扰动负载。输出包括：
+
+- `output/stress/stress_summary.csv`：每组工况的最终误差、峰值误差、RMS 误差、峰值 Iq、电压利用率和通过标志。
+- `output/stress/stress_metrics.json`：同一组指标的 JSON 版本。
+- `output/plots/07_stress_position_error.png`：用柱状图比较各工况位置误差。
+- `output/plots/08_stress_current_voltage.png`：比较峰值 Iq 和 SVPWM 电压利用率。
+- `output/plots/09_stress_reverse_tracking.png`：多段反向工况的位置跟踪细节。
+- `output/plots/10_stress_sine_load_tracking.png`：正弦扰动负载下的位置和负载跟踪细节。
+
 指定其他配置或输出目录：
 
 ```powershell
@@ -80,6 +95,8 @@ python simulate.py --config config.json --output my_output
 - `0.8 s` 后撤掉负载，观察位置恢复能力。
 
 修改 `scenario` 字段即可改变目标位置和负载阶跃。
+
+复杂工况脚本额外使用 `target_events_rev`、`load_events_nm` 和 `load_sine_nm` 描述多段目标、分段负载和正弦扰动。仿真主循环会把这些命令写入 `command_position_rev`、`load_nm`，便于检查轨迹规划前后的差异。
 
 ## 模型边界
 
