@@ -1,0 +1,15 @@
+{
+  "velocity_rms_rad_s": 0.21623300200877985,
+  "position_rms_rad": 0.012028565251087395,
+  "velocity_peak_abs_rad_s": 0.8920783941770629,
+  "position_peak_abs_rad": 0.034556373608630286,
+  "id_rms_a": 3.902280371382249e-17,
+  "iq_rms_a": 0.05728129872831282,
+  "iq_peak_abs_a": 0.07037428781857208,
+  "target_iq_peak_abs_a": 0.0703742680898863,
+  "voltage_saturation_ratio": 0.0,
+  "settling_time_s": 3.7672000000000003,
+  "command_velocity_rms_rad_s": 0.09407171761871384,
+  "command_velocity_peak_abs_rad_s": 0.5070079786273947,
+  "trajectory_shaping_rms_rad_s": 0.19323821645186312
+}
