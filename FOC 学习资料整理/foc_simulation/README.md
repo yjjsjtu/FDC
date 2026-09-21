@@ -16,6 +16,7 @@ python3 examples/identify_friction_inertia.py --input data/friction_sweep.csv
 python3 examples/run_compensation_compare.py
 python3 examples/run_control_optimization_compare.py
 python3 examples/run_position_three_loop.py
+python3 examples/run_rdrive_three_loop.py
 python3 -m unittest discover -s tests
 ```
 
@@ -49,10 +50,12 @@ examples/
   run_compensation_compare.py
   run_control_optimization_compare.py
   run_position_three_loop.py
+  run_rdrive_three_loop.py
 tests/
 docs/
 data/
 outputs/
+rdrive_three_loop/  从 three_loop_sim 迁移来的 RDrive/moteus 风格三环仿真
 ```
 
 ## 控制性能优化
@@ -84,3 +87,20 @@ outputs/
 - `outputs/position_three_loop_velocity.png`：位置环输出的目标速度和实际速度对比。
 - `outputs/position_three_loop_current.png`：目标 Iq、实际 Iq、实际 Id 对比。
 - `outputs/position_three_loop_metrics.json`：位置 RMS、速度 RMS、Iq 峰值等指标。
+
+## RDrive/moteus 固件参考仿真
+
+`rdrive_three_loop/` 是从仓库根目录 `three_loop_sim/` 迁移进来的三环仿真，参数和结构更贴近 RDrive/moteus：
+
+- 30 kHz 电流环，多速率速度环和位置环。
+- 位置 P、速度 PI、d/q 电流 PI 级联。
+- D 轴优先电压限幅、共模注入 SVPWM。
+- 负载扰动观测器，用来减小加载/卸载位置偏差。
+
+运行：
+
+```bash
+python3 examples/run_rdrive_three_loop.py
+```
+
+说明文档见 `docs/RDrive三环仿真迁移说明.md`。

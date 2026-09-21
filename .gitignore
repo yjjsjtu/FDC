@@ -44,6 +44,7 @@ venv/
 # Re-download them from the documented upstream sources when needed.
 /FOC 学习资料整理/acuator-release/source_files/moteus/
 /FOC 学习资料整理/acuator-release/source_files/dummyx2_rdrivec1.tar.gz
+/FOC 学习资料整理/acuator-release/source_files/dummyx2_rdrivec1/
 
 # Generated simulation data
 /FOC 学习资料整理/foc_simulation/data/*.csv
