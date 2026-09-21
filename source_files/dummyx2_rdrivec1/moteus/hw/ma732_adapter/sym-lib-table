@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 0)
+  (lib (name "ma732_adapter-eagle-import")(type "KiCad")(uri "${KIPRJMOD}/ma732_adapter-eagle-import.kicad_sym")(options "")(descr ""))
+)

@@ -1,0 +1,11 @@
+*.s#?
+*.l#?
+*.b#?
+*.bak
+*auto_saved_files*
+fdcanusb-backups
+old
+~*
+fdcanusb.xml
+fdcanusb_bom.xlsx
+fp-info-cache

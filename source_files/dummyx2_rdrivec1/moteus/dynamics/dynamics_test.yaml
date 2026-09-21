@@ -1,0 +1,50 @@
+# DummyX2 Robot - Real-time Torque Compensation Configuration
+
+# CAN Communication Configuration
+can:
+  interface: "socketcan"        # CAN interface type (socketcan, slcan, pcan, etc.)
+  channel: "can0"               # CAN channel (can0, /dev/ttyUSB0, etc.)
+
+# Motor Configuration List (RdriveS1 0.5.6 + Harmonic Reducers)
+motors:
+  - id: 1                                    # RdriveS1 CAN Node ID
+    reduction: 30.0                          # Harmonic reducer ratio
+    direction: 1                             # Direction: 1=forward, -1=reverse
+    description: "Joint 1 - Base"
+
+  - id: 2
+    reduction: 50.0
+    direction: -1
+    description: "Joint 2 - Shoulder"
+
+  - id: 3
+    reduction: 50.0
+    direction: -1
+    description: "Joint 3 - Elbow"
+
+  - id: 4
+    reduction: 30.0
+    direction: -1
+    description: "Joint 4 - Wrist1"
+
+  - id: 5
+    reduction: 30.0
+    direction: -1
+    description: "Joint 5 - Wrist2"
+
+  - id: 6
+    reduction: 30.0
+    direction: -1
+    description: "Joint 6 - Wrist3"
+
+# Control Parameters
+control:
+  rate: 200                          # Control rate (Hz)
+  compensation_mode: "gravity"       # Compensation mode: "gravity", "full_dynamics", "none"
+  vel_limit: 10.0                    # Velocity limit (turns/s)
+  current_limit: 20.0                # Current limit (A)
+
+# Logging Configuration
+logging:
+  print_status_interval: 0.5         # Status print interval (seconds)
+  verbose: false                     # Verbose output mode

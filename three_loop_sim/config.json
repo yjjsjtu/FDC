@@ -1,0 +1,47 @@
+{
+  "simulation": {
+    "duration_s": 1.2,
+    "control_rate_hz": 30000,
+    "speed_loop_divider": 10,
+    "position_loop_divider": 30,
+    "plant_substeps": 4,
+    "log_divider": 3
+  },
+  "motor": {
+    "pole_pairs": 7,
+    "phase_resistance_ohm": 0.047,
+    "d_inductance_h": 0.0000286,
+    "q_inductance_h": 0.0000286,
+    "flux_linkage_wb": 0.00260062,
+    "inertia_kg_m2": 0.000056,
+    "viscous_friction_nm_per_rad_s": 0.00003
+  },
+  "inverter": {
+    "bus_voltage_v": 24.0,
+    "svpwm_utilization": 0.928,
+    "current_limit_a": 40.0
+  },
+  "controller": {
+    "position_kp_rad_s_per_rad": 20.0,
+    "speed_kp_a_per_rad_s": 0.75,
+    "speed_ki_a_per_rad": 25.0,
+    "current_kp_v_per_a": 0.065,
+    "current_ki_v_per_a_s": 120.0,
+    "speed_limit_rev_s": 2.0,
+    "acceleration_limit_rev_s2": 12.0,
+    "current_reference_slew_a_s": 10000.0,
+    "enable_resistance_feedforward": true,
+    "enable_bemf_feedforward": true,
+    "enable_cross_coupling_feedforward": true,
+    "enable_load_disturbance_observer": true,
+    "disturbance_observer_bandwidth_hz": 80.0,
+    "disturbance_observer_torque_limit_nm": 0.2
+  },
+  "scenario": {
+    "position_step_time_s": 0.1,
+    "target_position_rev": 0.25,
+    "load_start_s": 0.55,
+    "load_end_s": 0.8,
+    "load_torque_nm": 0.08
+  }
+}

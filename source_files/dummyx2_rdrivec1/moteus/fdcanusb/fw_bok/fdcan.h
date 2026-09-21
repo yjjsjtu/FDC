@@ -1,0 +1,195 @@
+// Copyright 2019-2020 Josh Pieper, jjp@pobox.com.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#pragma once
+
+#include <string_view>
+
+#include "mbed.h"
+
+#include "mjlib/base/string_span.h"
+
+namespace fw {
+
+class FDCan {
+ public:
+  enum class FilterAction {
+    kDisable,
+    kAccept,
+    kReject,
+  };
+
+  enum class FilterMode {
+    kRange,
+    kDual,
+    kMask,
+  };
+
+  enum class FilterType {
+    kStandard,
+    kExtended,
+  };
+
+  struct Filter {
+    uint32_t id1 = 0;
+    uint32_t id2 = 0;
+
+    FilterMode mode = FilterMode::kRange;
+    FilterAction action = FilterAction::kDisable;
+    FilterType type = FilterType::kStandard;
+  };
+
+  struct Rate {
+    int prescaler = -1;
+    int sync_jump_width = -1;
+    int time_seg1 = -1;
+    int time_seg2 = -1;
+  };
+
+  struct Options {
+    PinName td = NC;
+    PinName rd = NC;
+    int slow_bitrate = 1000000;
+    float slow_sample_point = 0.666;
+    int fast_bitrate = 5000000;
+    float fast_sample_point = 0.666;
+
+    bool automatic_retransmission = false;
+    bool remote_frame = false;
+    bool fdcan_frame = false;
+    bool bitrate_switch = false;
+    bool restricted_mode = false;
+    bool bus_monitor = false;
+    bool loopback = false;
+
+    bool delay_compensation = false;
+    uint32_t tdc_offset = 0;
+    uint32_t tdc_filter = 0;
+
+    FilterAction global_std_action = FilterAction::kAccept;
+    FilterAction global_ext_action = FilterAction::kAccept;
+    FilterAction global_remote_std_action = FilterAction::kAccept;
+    FilterAction global_remote_ext_action = FilterAction::kAccept;
+
+    const Filter* filter_begin = nullptr;
+    const Filter* filter_end = nullptr;
+
+    // If any members of this are non-negative, force them to be used
+    // instead of the auto-calculated values.
+    Rate rate_override;
+    Rate fdrate_override;
+
+    Options() {}
+  };
+
+  FDCan(const Options& options = Options());
+
+  enum class Override {
+    kDefault,
+    kRequire,
+    kDisable,
+  };
+
+  struct SendOptions {
+    Override bitrate_switch = Override::kDefault;
+    Override fdcan_frame = Override::kDefault;
+    Override remote_frame = Override::kDefault;
+    Override extended_id = Override::kDefault;
+    bool abort_existing = false;
+
+    SendOptions() {}
+  };
+
+  enum SendResult {
+    kSuccess,
+    kNoSpace,
+  };
+
+  SendResult Send(uint32_t dest_id,
+                  std::string_view data,
+                  const SendOptions& = SendOptions());
+
+  /// Cancel all queued packets.
+  void CancelAll();
+
+  /// @return true if a packet was available.
+  bool Poll(FDCAN_RxHeaderTypeDef* header, mjlib::base::string_span);
+
+  void RecoverBusOff();
+
+  FDCAN_ProtocolStatusTypeDef status();
+  FDCAN_ErrorCountersTypeDef error_counters();
+
+  bool tx_queue_full() {
+    return (can_->TXFQS & FDCAN_TXFQS_TFQF) != 0;
+  }
+
+  struct Config {
+    int clock = 0;
+    Rate nominal;
+    Rate data;
+  };
+
+  Config config() const;
+
+  static uint8_t DlcToSize(uint8_t dlc_code) {
+    if (dlc_code == 0) { return 0; }
+    if (dlc_code == 1) { return 1; }
+    if (dlc_code == 2) { return 2; }
+    if (dlc_code == 3) { return 3; }
+    if (dlc_code == 4) { return 4; }
+    if (dlc_code == 5) { return 5; }
+    if (dlc_code == 6) { return 6; }
+    if (dlc_code == 7) { return 7; }
+    if (dlc_code == 8) { return 8; }
+    if (dlc_code == 9) { return 12; }
+    if (dlc_code == 10) { return 16; }
+    if (dlc_code == 11) { return 20; }
+    if (dlc_code == 12) { return 24; }
+    if (dlc_code == 13) { return 32; }
+    if (dlc_code == 14) { return 48; }
+    if (dlc_code == 15) { return 64; }
+    return 64;
+  }
+
+  static uint8_t SizeToDlc(uint8_t size) {
+    if (size == 0) { return 0; }
+    if (size == 1) { return 1; }
+    if (size == 2) { return 2; }
+    if (size == 3) { return 3; }
+    if (size == 4) { return 4; }
+    if (size == 5) { return 5; }
+    if (size == 6) { return 6; }
+    if (size == 7) { return 7; }
+    if (size == 8) { return 8; }
+    if (size <= 12) { return 9; }
+    if (size <= 16) { return 10; }
+    if (size <= 20) { return 11; }
+    if (size <= 24) { return 12; }
+    if (size <= 32) { return 13; }
+    if (size <= 48) { return 14; }
+    if (size <= 64) { return 15; }
+    return 15;
+  }
+
+ private:
+  const Options options_;
+  Config config_;
+
+  FDCAN_GlobalTypeDef* can_ = nullptr;
+  FDCAN_HandleTypeDef hfdcan1_;
+  uint32_t last_tx_request_ = 0;
+};
+
+}

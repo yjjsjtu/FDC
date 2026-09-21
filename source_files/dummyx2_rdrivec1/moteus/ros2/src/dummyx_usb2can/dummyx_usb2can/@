@@ -1,0 +1,280 @@
+#!/usr/bin/env python3
+
+import rclpy
+from rclpy.node import Node
+import can
+from typing import Dict
+from threading import Lock
+import struct
+import json
+import time
+import math
+from dummyx_interface.srv import InitUsb2Can
+from dummyx_interface.srv import WriteUsb2Can
+from dummyx_interface.srv import ReadUsb2Can
+from sensor_msgs.msg import JointState
+
+# CAN Command Definitions (RdriveS1 0.5.6)
+CMD_ID_HEARTBEAT = 0x01
+CMD_ID_SET_AXIS_STATE = 0x07
+CMD_ID_GET_ENCODER_ESTIMATES = 0x09
+CMD_ID_SET_INPUT_POS = 0x0C
+CMD_ID_SET_INPUT_VEL = 0x0D
+
+# Axis States
+AXIS_STATE_IDLE = 1
+AXIS_STATE_CLOSED_LOOP_CONTROL = 8
+
+class Motor:
+    def __init__(self, bus: can.Bus, node_id: int, reduction: float):
+        self.bus = bus
+        self.node_id = node_id
+        self.reduction = reduction
+        self.position = 0.0
+        self.saved_position = 0.0
+        self.enabled = False
+        self.lock = Lock()
+        self.last_sent_position = None  # Track last sent position
+    
+    def build_can_id(self, cmd_id: int) -> int:
+        return (self.node_id << 5) | cmd_id
+
+    def rads_to_rps(self, rad_per_sec):
+        return rad_per_sec / (2 * math.pi)
+
+    def send_position(self, position, velocity):
+        # Check if position change is significant enough (0.01 degree threshold)
+        # Note: position is in turns
+        if (self.last_sent_position is not None and 
+            abs(position - self.last_sent_position) < 0.0001):
+            return  # Skip sending if change is too small
+            
+        # RdriveS1 0.5.6 Set Input Pos: Input Pos (float), Vel FF (int16), Torque FF (int16)
+        tx_id = self.build_can_id(cmd_id=CMD_ID_SET_INPUT_POS)
+        
+        # velocity is in rad/s (motor frame). Convert to turns/s then scale by 1000
+        # Vel FF unit: 0.001 turns/s
+        velocity_turns_s = self.rads_to_rps(velocity)
+        vel_ff_val = int(velocity_turns_s * 1000)
+        
+        # Clamp to int16 range
+        vel_ff = max(min(vel_ff_val, 32767), -32768)
+        torque_ff = 0
+        
+        data = struct.pack("<fhh", position, vel_ff, torque_ff)
+        msg = can.Message(
+            arbitration_id=tx_id,
+            data=data,
+            is_extended_id=False
+        )
+        
+        with self.lock:
+            self.bus.send(msg)
+            self.last_sent_position = position
+
+    def enable(self):
+        tx_id = self.build_can_id(cmd_id=CMD_ID_SET_AXIS_STATE)
+        data = struct.pack("<I", AXIS_STATE_CLOSED_LOOP_CONTROL)
+        msg = can.Message(
+            arbitration_id=tx_id,
+            data=data,
+            is_extended_id=False
+        )
+        with self.lock:
+            self.bus.send(msg)
+            self.enabled = True
+    
+    def disable(self):
+        tx_id = self.build_can_id(cmd_id=CMD_ID_SET_AXIS_STATE)
+        data = struct.pack("<I", AXIS_STATE_IDLE)
+        msg = can.Message(
+            arbitration_id=tx_id,
+            data=data,
+            is_extended_id=False
+        )
+        with self.lock:
+            self.bus.send(msg)
+            self.enabled = False
+    
+    def update_encoder_estimates(self, msg: can.Message):
+        if len(msg.data) >= 8:
+            with self.lock:
+                # Pos (float), Vel (float)
+                self.position = struct.unpack("<ff", msg.data)[0]
+    
+    def update_heartbeat(self, msg: can.Message):
+         if len(msg.data) >= 8:
+             # Heartbeat: Axis Error(4), Axis State(1), Motor Flags(1), Encoder Flags(1), Controller Flags(1)
+             # We can verify enabled state here if needed
+             pass
+
+class MotorController:
+    def __init__(self, interface: str, channel: str, motor_config: Dict[int, float]):
+        self.bus = can.Bus(interface=interface, channel=channel, receive_own_messages=True)
+        self.motors: Dict[int, Motor] = {}
+        self.message_lock = Lock()
+        
+        # Initialize all motors
+        for node_id, reduction in motor_config.items():
+            self.motors[node_id] = Motor(self.bus, node_id, reduction)
+        
+        # Start CAN message listener
+        self.notifier = can.Notifier(self.bus, [self.on_message_received])
+    
+    # Removed build_can_bc and send_sync as they are not used in RdriveS1 0.5.6 simple implementation
+    
+    def enable_all_motors(self):
+        """Enable all initialized motors"""
+        for motor in self.motors.values():
+            motor.enable()
+            time.sleep(0.02)  # Small delay between commands
+    
+    def disable_all_motors(self):
+        """Disable all motors"""
+        for motor in self.motors.values():
+            motor.disable()
+            time.sleep(0.02)
+    
+    def on_message_received(self, msg):
+        node_id = (msg.arbitration_id >> 5) & 0x1F
+        cmd_id = msg.arbitration_id & 0x1F
+        
+        if node_id in self.motors:
+            if cmd_id == CMD_ID_GET_ENCODER_ESTIMATES:
+                self.motors[node_id].update_encoder_estimates(msg)
+            elif cmd_id == CMD_ID_HEARTBEAT:
+                self.motors[node_id].update_heartbeat(msg)
+    
+    def shutdown(self):
+        self.notifier.stop()
+        self.bus.shutdown()
+
+class USB2CANNode(Node):
+    def __init__(self):
+        super().__init__('usb2can_node')
+        
+        # Declare parameters
+        self.declare_parameter('interface', 'socketcan')
+        self.declare_parameter('channel', 'can0')
+        self.declare_parameter('motor_config_json', '{"1":50.0,"2":50.0,"3":50.0,"4":30.0,"5":30.0,"6":30.0}')
+        self.declare_parameter('joint_names', ['Joint1', 'Joint2', 'Joint3', 'Joint4', 'Joint5', 'Joint6'])
+
+        self.srv = self.create_service(InitUsb2Can, 'init_usb2can', self.init_usb2can_callback)
+        self.srv = self.create_service(WriteUsb2Can, 'write_usb2can', self.write_usb2can_callback)
+        self.srv = self.create_service(ReadUsb2Can, 'read_usb2can', self.read_usb2can_callback)
+        
+        # Get parameter values
+        interface = self.get_parameter('interface').value
+        channel = self.get_parameter('channel').value
+        motor_config_json = self.get_parameter('motor_config_json').value
+        self.joint_names = self.get_parameter('joint_names').value
+        
+        try:
+            motor_config = {int(k): float(v) for k, v in json.loads(motor_config_json).items()}
+        except (json.JSONDecodeError, ValueError) as e:
+            self.get_logger().error(f"Invalid motor_config_json format: {e}")
+            motor_config = {1: 50.0, 2: 50.0, 3: 50.0, 4: 30.0, 5: 30.0, 6: 30.0}
+        
+        self.get_logger().info(f"Initializing USB2CAN with interface: {interface}, channel: {channel}")
+        self.get_logger().info(f"Motor configuration: {motor_config}")
+        
+        try:
+            # Initialize motor controller with all motors
+            self.controller = MotorController(
+                interface=interface,
+                channel=channel,
+                motor_config=motor_config
+            )
+            self.get_logger().info("Successfully initialized all motors")
+            
+            # Enable all motors
+            self.controller.enable_all_motors()
+            self.get_logger().info("Enabled all motors")
+            
+            # Create subscriber for joint states
+            self.joint_state_sub = self.create_subscription(
+                JointState,
+                'joint_states',
+                self.joint_state_callback,
+                10
+            )
+            self.get_logger().info("Subscribed to joint_states topic")
+            
+        except Exception as e:
+            self.get_logger().error(f"Failed to initialize USB2CAN: {str(e)}")
+            raise
+    
+    def joint_state_callback(self, msg: JointState):
+        # Check if we have all expected joints
+        if not all(name in msg.name for name in self.joint_names):
+            self.get_logger().warn("Received joint states don't contain all expected joints")
+            return
+        
+        # Convert joint positions from radians to degrees and send to motors
+        for i, joint_name in enumerate(self.joint_names):
+            try:
+                joint_index = msg.name.index(joint_name)
+                joint_position_rad = msg.position[joint_index]
+                joint_velocity_rad = msg.velocity[joint_index]
+                joint_position_deg = math.degrees(joint_position_rad)
+                
+                # Motor IDs are 1-6 corresponding to joints 1-6
+                motor_id = i + 1
+                if motor_id in self.controller.motors:
+                    # Calculate motor turns: degrees / 360 * reduction
+                    motor_turns = joint_position_deg / 360 * self.controller.motors[motor_id].reduction
+                        self.controller.motors[motor_id].send_position(
+                            motor_turns * -1, 
+                            joint_velocity_rad * self.controller.motors[motor_id].reduction * -1
+                #everything good
+                # self.controller.send_sync() # Removed sync command
+            except (ValueError, IndexError) as e:
+                self.get_logger().error(f"Error processing joint state for {joint_name}: {str(e)}")
+
+    def init_usb2can_callback(self, request, response):
+        self.get_logger().info("Initializing USB2CAN callback")
+        if request.action == 'stop':
+            self.controller.disable_all_motors()
+        elif request.action == 'start':
+            self.controller.enable_all_motors()
+        response.success = True
+        return response
+
+    def write_usb2can_callback(self, request, response):
+        if self.controller is None:
+            response.success = False
+            return response
+        response.success = True  
+        return response
+
+    def read_usb2can_callback(self, request, response):
+        response.pos_commands = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        response.vel_commands = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        response.success = True  
+        return response
+
+    def on_shutdown(self):
+        self.get_logger().info("Shutting down USB2CAN controller")
+        if hasattr(self, 'controller'):
+            self.controller.disable_all_motors()
+            self.controller.shutdown()
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = None
+    
+    try:
+        node = USB2CANNode()
+        rclpy.spin(node)
+    except Exception as e:
+        if node is not None:
+            node.get_logger().error(f"Error in USB2CAN node: {str(e)}")
+        else:
+            print(f"Error creating USB2CAN node: {str(e)}")
+    finally:
+        if node is not None:
+            node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

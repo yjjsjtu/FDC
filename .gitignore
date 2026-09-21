@@ -1,0 +1,30 @@
+# Operating-system and editor metadata
+.DS_Store
+**/.DS_Store
+**/__MACOSX/
+.vscode/
+**/.vscode/
+
+# Python caches and local environments
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Generated ROS 2 / CMake / Bazel output
+/source_files/dummyx2_rdrivec1/moteus/ros2/build/
+/source_files/dummyx2_rdrivec1/moteus/ros2/install/
+/source_files/dummyx2_rdrivec1/moteus/ros2/log/
+/source_files/dummyx2_rdrivec1/moteus/tmp/
+**/bazel-bin/
+**/bazel-out/
+**/bazel-testlogs/
+
+# Local PCB editor state and automatic backup folders
+*.kicad_prl
+**/*-backups/
+
+# The extracted source tree below is versioned; this duplicate archive is not.
+/source_files/dummyx2_rdrivec1.tar.gz
+

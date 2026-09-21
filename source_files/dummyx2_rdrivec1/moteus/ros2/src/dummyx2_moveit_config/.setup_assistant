@@ -1,0 +1,27 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: dummyx2_description
+    relative_path: urdf/dummyx2.xacro
+  srdf:
+    relative_path: config/dummyx2.srdf
+  package_settings:
+    author_name: xiaowen
+    author_email: xiaowen@switchpi.com
+    generated_timestamp: 1770084777
+  control_xacro:
+    command:
+      - position
+      - velocity
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+      - velocity
+    state:
+      - position
+      - velocity

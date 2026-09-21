@@ -1,0 +1,1307 @@
+[
+    {
+        "timestamp": "09:51:03.501",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.005397034529596567
+            },
+            {
+                "node_id": 2,
+                "position": -27.99990863800049
+            },
+            {
+                "node_id": 3,
+                "position": 57.35711288452149
+            },
+            {
+                "node_id": 4,
+                "position": 0.00933837890625
+            },
+            {
+                "node_id": 5,
+                "position": -2.565041720867157
+            },
+            {
+                "node_id": 6,
+                "position": 0.006419699639081955
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:04.001",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.004923249129205942
+            },
+            {
+                "node_id": 2,
+                "position": -28.000300025939943
+            },
+            {
+                "node_id": 3,
+                "position": 57.35673522949219
+            },
+            {
+                "node_id": 4,
+                "position": 0.008514404296875
+            },
+            {
+                "node_id": 5,
+                "position": -2.566243350505829
+            },
+            {
+                "node_id": 6,
+                "position": 0.005870383931323887
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:04.501",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.0055618294514715675
+            },
+            {
+                "node_id": 2,
+                "position": -27.999022865295412
+            },
+            {
+                "node_id": 3,
+                "position": 57.35611724853515
+            },
+            {
+                "node_id": 4,
+                "position": 0.011260986328124998
+            },
+            {
+                "node_id": 5,
+                "position": -2.5681316256523132
+            },
+            {
+                "node_id": 6,
+                "position": 0.006042047403752804
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:05.002",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.0048408516682684425
+            },
+            {
+                "node_id": 2,
+                "position": -27.99990863800049
+            },
+            {
+                "node_id": 3,
+                "position": 57.35793685913086
+            },
+            {
+                "node_id": 4,
+                "position": 0.009716033935546875
+            },
+            {
+                "node_id": 5,
+                "position": -2.565694034099579
+            },
+            {
+                "node_id": 6,
+                "position": 0.005424069939181209
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:05.502",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.005788422469049693
+            },
+            {
+                "node_id": 2,
+                "position": -27.999331855773924
+            },
+            {
+                "node_id": 3,
+                "position": 57.35539627075196
+            },
+            {
+                "node_id": 4,
+                "position": 0.01050567626953125
+            },
+            {
+                "node_id": 5,
+                "position": -2.563290774822235
+            },
+            {
+                "node_id": 6,
+                "position": 0.006351044168695808
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:06.002",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.005685425642877818
+            },
+            {
+                "node_id": 2,
+                "position": -28.000403022766115
+            },
+            {
+                "node_id": 3,
+                "position": 57.3574562072754
+            },
+            {
+                "node_id": 4,
+                "position": 0.010402679443359375
+            },
+            {
+                "node_id": 5,
+                "position": -2.567238986492157
+            },
+            {
+                "node_id": 6,
+                "position": 0.005286745727062225
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:06.502",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.005273438338190317
+            },
+            {
+                "node_id": 2,
+                "position": -27.999661445617676
+            },
+            {
+                "node_id": 3,
+                "position": 57.35855484008789
+            },
+            {
+                "node_id": 4,
+                "position": 0.01187896728515625
+            },
+            {
+                "node_id": 5,
+                "position": -2.5655223727226257
+            },
+            {
+                "node_id": 6,
+                "position": 0.0059733919333666554
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:07.002",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.004037476424127817
+            },
+            {
+                "node_id": 2,
+                "position": -27.999373054504396
+            },
+            {
+                "node_id": 3,
+                "position": 57.356563568115234
+            },
+            {
+                "node_id": 4,
+                "position": 0.010402679443359375
+            },
+            {
+                "node_id": 5,
+                "position": -2.565316379070282
+            },
+            {
+                "node_id": 6,
+                "position": 0.006797372829169035
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:07.502",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.005623627547174693
+            },
+            {
+                "node_id": 2,
+                "position": -28.00005283355713
+            },
+            {
+                "node_id": 3,
+                "position": 57.35786819458008
+            },
+            {
+                "node_id": 4,
+                "position": 0.0116729736328125
+            },
+            {
+                "node_id": 5,
+                "position": -2.5656253695487976
+            },
+            {
+                "node_id": 6,
+                "position": 0.005527082830667496
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:08.002",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.008816529158502817
+            },
+            {
+                "node_id": 2,
+                "position": -27.992822456359864
+            },
+            {
+                "node_id": 3,
+                "position": 57.109474182128906
+            },
+            {
+                "node_id": 4,
+                "position": 0.00514984130859375
+            },
+            {
+                "node_id": 5,
+                "position": -2.49764746427536
+            },
+            {
+                "node_id": 6,
+                "position": 0.0060077374801039704
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:08.502",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.006612397078424692
+            },
+            {
+                "node_id": 2,
+                "position": -7.899274635314941
+            },
+            {
+                "node_id": 3,
+                "position": 31.48273086547852
+            },
+            {
+                "node_id": 4,
+                "position": -0.010608673095703125
+            },
+            {
+                "node_id": 5,
+                "position": -2.5010806918144226
+            },
+            {
+                "node_id": 6,
+                "position": 0.007175039034336805
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:09.002",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.007786560896784067
+            },
+            {
+                "node_id": 2,
+                "position": 11.606203365325928
+            },
+            {
+                "node_id": 3,
+                "position": 11.370677947998047
+            },
+            {
+                "node_id": 4,
+                "position": -0.006214141845703126
+            },
+            {
+                "node_id": 5,
+                "position": -2.501321017742157
+            },
+            {
+                "node_id": 6,
+                "position": 0.006110739894211291
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:09.502",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.42665407955646517
+            },
+            {
+                "node_id": 2,
+                "position": 11.598869991302491
+            },
+            {
+                "node_id": 3,
+                "position": 12.42608642578125
+            },
+            {
+                "node_id": 4,
+                "position": 0.010677337646484375
+            },
+            {
+                "node_id": 5,
+                "position": -62.506622314453125
+            },
+            {
+                "node_id": 6,
+                "position": 0.006316735642030834
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:10.002",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.6183106005191803
+            },
+            {
+                "node_id": 2,
+                "position": 11.60008535385132
+            },
+            {
+                "node_id": 3,
+                "position": 20.104122161865234
+            },
+            {
+                "node_id": 4,
+                "position": 0.01091766357421875
+            },
+            {
+                "node_id": 5,
+                "position": -70.68704223632812
+            },
+            {
+                "node_id": 6,
+                "position": 0.005664423108100891
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:10.502",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 7.799806308746338
+            },
+            {
+                "node_id": 2,
+                "position": 11.487901210784912
+            },
+            {
+                "node_id": 3,
+                "position": 22.56378936767578
+            },
+            {
+                "node_id": 4,
+                "position": 0.013973236083984377
+            },
+            {
+                "node_id": 5,
+                "position": -70.67416763305664
+            },
+            {
+                "node_id": 6,
+                "position": 0.005561427678912878
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:11.003",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 8.920494174957275
+            },
+            {
+                "node_id": 2,
+                "position": 11.489528560638426
+            },
+            {
+                "node_id": 3,
+                "position": 25.199649810791016
+            },
+            {
+                "node_id": 4,
+                "position": 0.014728546142578125
+            },
+            {
+                "node_id": 5,
+                "position": -70.67049407958984
+            },
+            {
+                "node_id": 6,
+                "position": 0.006934718694537878
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:11.503",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 37.83932762145996
+            },
+            {
+                "node_id": 2,
+                "position": 11.186367702484132
+            },
+            {
+                "node_id": 3,
+                "position": 25.192371368408207
+            },
+            {
+                "node_id": 4,
+                "position": 9.782466888427734
+            },
+            {
+                "node_id": 5,
+                "position": -70.63863372802734
+            },
+            {
+                "node_id": 6,
+                "position": 0.00734670739620924
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:12.003",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 33.73113441467285
+            },
+            {
+                "node_id": 2,
+                "position": 11.199139308929443
+            },
+            {
+                "node_id": 3,
+                "position": 25.19855117797852
+            },
+            {
+                "node_id": 4,
+                "position": 4.561420440673828
+            },
+            {
+                "node_id": 5,
+                "position": -70.65006637573242
+            },
+            {
+                "node_id": 6,
+                "position": 0.007690029451623559
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:12.503",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -16.733398246765137
+            },
+            {
+                "node_id": 2,
+                "position": 11.20585470199585
+            },
+            {
+                "node_id": 3,
+                "position": 23.011310577392578
+            },
+            {
+                "node_id": 4,
+                "position": -17.438737392425537
+            },
+            {
+                "node_id": 5,
+                "position": -70.64241027832031
+            },
+            {
+                "node_id": 6,
+                "position": 0.007758694002404809
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:13.003",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -48.33820266723633
+            },
+            {
+                "node_id": 2,
+                "position": 10.893115139007568
+            },
+            {
+                "node_id": 3,
+                "position": 28.004253387451172
+            },
+            {
+                "node_id": 4,
+                "position": -41.19663906097412
+            },
+            {
+                "node_id": 5,
+                "position": -66.42534255981445
+            },
+            {
+                "node_id": 6,
+                "position": 0.005767422029748558
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:13.503",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -48.33797607421875
+            },
+            {
+                "node_id": 2,
+                "position": 10.898882961273193
+            },
+            {
+                "node_id": 3,
+                "position": 12.867324829101564
+            },
+            {
+                "node_id": 4,
+                "position": -32.374342918395996
+            },
+            {
+                "node_id": 5,
+                "position": -19.009998321533203
+            },
+            {
+                "node_id": 6,
+                "position": 0.00659139733761549
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:14.003",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -48.3389030456543
+            },
+            {
+                "node_id": 2,
+                "position": 10.885658168792725
+            },
+            {
+                "node_id": 3,
+                "position": 12.874740600585938
+            },
+            {
+                "node_id": 4,
+                "position": -96.27948760986328
+            },
+            {
+                "node_id": 5,
+                "position": -45.68816757202148
+            },
+            {
+                "node_id": 6,
+                "position": 0.006385405780747533
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:14.503",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -48.33750228881836
+            },
+            {
+                "node_id": 2,
+                "position": 12.949014186859133
+            },
+            {
+                "node_id": 3,
+                "position": 10.699138641357422
+            },
+            {
+                "node_id": 4,
+                "position": -102.01112365722656
+            },
+            {
+                "node_id": 5,
+                "position": -61.838104248046875
+            },
+            {
+                "node_id": 6,
+                "position": 0.00614508124999702
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:15.003",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -48.289897155761714
+            },
+            {
+                "node_id": 2,
+                "position": 12.979048061370849
+            },
+            {
+                "node_id": 3,
+                "position": 10.729145050048828
+            },
+            {
+                "node_id": 4,
+                "position": -78.82571411132812
+            },
+            {
+                "node_id": 5,
+                "position": -41.17841720581055
+            },
+            {
+                "node_id": 6,
+                "position": 0.00834234687499702
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:15.503",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -33.98201065063476
+            },
+            {
+                "node_id": 2,
+                "position": 12.7097731590271
+            },
+            {
+                "node_id": 3,
+                "position": 14.526535034179688
+            },
+            {
+                "node_id": 4,
+                "position": 7.363507032394409
+            },
+            {
+                "node_id": 5,
+                "position": -5.067008972167969
+            },
+            {
+                "node_id": 6,
+                "position": 0.006316744722425938
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:16.004",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": -6.106269836425781
+            },
+            {
+                "node_id": 2,
+                "position": 16.284732055664062
+            },
+            {
+                "node_id": 3,
+                "position": 9.84048843383789
+            },
+            {
+                "node_id": 4,
+                "position": 14.596768856048582
+            },
+            {
+                "node_id": 5,
+                "position": -32.95981979370117
+            },
+            {
+                "node_id": 6,
+                "position": 0.006694399751722813
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:16.504",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.9002129673957824
+            },
+            {
+                "node_id": 2,
+                "position": 16.292456817626952
+            },
+            {
+                "node_id": 3,
+                "position": 24.73214721679688
+            },
+            {
+                "node_id": 4,
+                "position": 9.440473079681396
+            },
+            {
+                "node_id": 5,
+                "position": -58.64424133300781
+            },
+            {
+                "node_id": 6,
+                "position": 0.007724368711933494
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:17.004",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8907166600227355
+            },
+            {
+                "node_id": 2,
+                "position": 16.40892562866211
+            },
+            {
+                "node_id": 3,
+                "position": 16.490169525146484
+            },
+            {
+                "node_id": 4,
+                "position": 0.1755995750427246
+            },
+            {
+                "node_id": 5,
+                "position": 1.0045166909694672
+            },
+            {
+                "node_id": 6,
+                "position": 0.006007755640894175
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:17.504",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8897484898567201
+            },
+            {
+                "node_id": 2,
+                "position": 23.348522186279297
+            },
+            {
+                "node_id": 3,
+                "position": -3.583019614219666
+            },
+            {
+                "node_id": 4,
+                "position": 0.14775609970092773
+            },
+            {
+                "node_id": 5,
+                "position": -18.02606964111328
+            },
+            {
+                "node_id": 6,
+                "position": 0.007518376456573606
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:18.004",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8899132847785949
+            },
+            {
+                "node_id": 2,
+                "position": 27.675274658203126
+            },
+            {
+                "node_id": 3,
+                "position": -4.142052412033081
+            },
+            {
+                "node_id": 4,
+                "position": 0.16396093368530273
+            },
+            {
+                "node_id": 5,
+                "position": -91.67786407470705
+            },
+            {
+                "node_id": 6,
+                "position": 0.006385413464158773
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:18.504",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8902428746223449
+            },
+            {
+                "node_id": 2,
+                "position": 48.85000076293945
+            },
+            {
+                "node_id": 3,
+                "position": -4.1233069896698
+            },
+            {
+                "node_id": 4,
+                "position": 0.1636519432067871
+            },
+            {
+                "node_id": 5,
+                "position": -79.17157745361328
+            },
+            {
+                "node_id": 6,
+                "position": 0.006213754881173372
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:19.004",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8914376378059387
+            },
+            {
+                "node_id": 2,
+                "position": 58.995703125
+            },
+            {
+                "node_id": 3,
+                "position": 18.668964385986328
+            },
+            {
+                "node_id": 4,
+                "position": 0.1617293357849121
+            },
+            {
+                "node_id": 5,
+                "position": -79.18733596801758
+            },
+            {
+                "node_id": 6,
+                "position": 0.006522745359688997
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:19.504",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8899956822395325
+            },
+            {
+                "node_id": 2,
+                "position": 56.808174133300774
+            },
+            {
+                "node_id": 3,
+                "position": 40.63173294067383
+            },
+            {
+                "node_id": 4,
+                "position": 0.15606451034545898
+            },
+            {
+                "node_id": 5,
+                "position": -60.53752899169922
+            },
+            {
+                "node_id": 6,
+                "position": 0.006728739710524678
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:20.004",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8911698460578918
+            },
+            {
+                "node_id": 2,
+                "position": 23.572025299072266
+            },
+            {
+                "node_id": 3,
+                "position": 56.722515106201165
+            },
+            {
+                "node_id": 4,
+                "position": -2.4158692359924316
+            },
+            {
+                "node_id": 5,
+                "position": -55.33546829223633
+            },
+            {
+                "node_id": 6,
+                "position": 0.0037074998253956437
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:20.504",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8908608555793762
+            },
+            {
+                "node_id": 2,
+                "position": 21.15205307006836
+            },
+            {
+                "node_id": 3,
+                "position": 65.3591423034668
+            },
+            {
+                "node_id": 4,
+                "position": -3.9015984535217285
+            },
+            {
+                "node_id": 5,
+                "position": -38.792598724365234
+            },
+            {
+                "node_id": 6,
+                "position": 0.008102033520117402
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:21.005",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8908608555793762
+            },
+            {
+                "node_id": 2,
+                "position": -6.797454500198365
+            },
+            {
+                "node_id": 3,
+                "position": 65.35412979125977
+            },
+            {
+                "node_id": 4,
+                "position": -5.703768253326415
+            },
+            {
+                "node_id": 5,
+                "position": -24.76607894897461
+            },
+            {
+                "node_id": 6,
+                "position": 0.005321119213476777
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:21.505",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8912316441535949
+            },
+            {
+                "node_id": 2,
+                "position": -7.904959201812744
+            },
+            {
+                "node_id": 3,
+                "position": 65.35395812988281
+            },
+            {
+                "node_id": 4,
+                "position": -5.704935550689697
+            },
+            {
+                "node_id": 5,
+                "position": -24.775142669677734
+            },
+            {
+                "node_id": 6,
+                "position": 0.007037732284516096
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:22.005",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8901192784309387
+            },
+            {
+                "node_id": 2,
+                "position": -7.903661441802979
+            },
+            {
+                "node_id": 3,
+                "position": 65.35505676269531
+            },
+            {
+                "node_id": 4,
+                "position": -5.703150272369385
+            },
+            {
+                "node_id": 5,
+                "position": -24.775657653808594
+            },
+            {
+                "node_id": 6,
+                "position": 0.005698774242773651
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:22.505",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8920968174934387
+            },
+            {
+                "node_id": 2,
+                "position": -7.9054123878479
+            },
+            {
+                "node_id": 3,
+                "position": 65.35680770874023
+            },
+            {
+                "node_id": 4,
+                "position": -5.702944278717041
+            },
+            {
+                "node_id": 5,
+                "position": -24.77655029296875
+            },
+            {
+                "node_id": 6,
+                "position": 0.008102034917101264
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:23.005",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8912934422492982
+            },
+            {
+                "node_id": 2,
+                "position": -7.904650211334229
+            },
+            {
+                "node_id": 3,
+                "position": 65.35543441772461
+            },
+            {
+                "node_id": 4,
+                "position": -5.702772617340088
+            },
+            {
+                "node_id": 5,
+                "position": -24.77493667602539
+            },
+            {
+                "node_id": 6,
+                "position": 0.00696907052770257
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:23.505",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8907990574836732
+            },
+            {
+                "node_id": 2,
+                "position": -7.905123996734619
+            },
+            {
+                "node_id": 3,
+                "position": 65.35629272460938
+            },
+            {
+                "node_id": 4,
+                "position": -5.7039055824279785
+            },
+            {
+                "node_id": 5,
+                "position": -24.775794982910156
+            },
+            {
+                "node_id": 6,
+                "position": 0.006625749170780182
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:24.005",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8899956822395325
+            },
+            {
+                "node_id": 2,
+                "position": -7.903579044342041
+            },
+            {
+                "node_id": 3,
+                "position": 65.35443878173828
+            },
+            {
+                "node_id": 4,
+                "position": -5.7052788734436035
+            },
+            {
+                "node_id": 5,
+                "position": -24.777477264404297
+            },
+            {
+                "node_id": 6,
+                "position": 0.005527117755264044
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:24.505",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8894806981086731
+            },
+            {
+                "node_id": 2,
+                "position": -7.904567813873291
+            },
+            {
+                "node_id": 3,
+                "position": 65.35725402832031
+            },
+            {
+                "node_id": 4,
+                "position": -5.703115940093994
+            },
+            {
+                "node_id": 5,
+                "position": -24.776893615722656
+            },
+            {
+                "node_id": 6,
+                "position": 0.005458454601466656
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:25.006",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8909226536750793
+            },
+            {
+                "node_id": 2,
+                "position": -7.904114627838135
+            },
+            {
+                "node_id": 3,
+                "position": 65.35598373413086
+            },
+            {
+                "node_id": 4,
+                "position": -5.705038547515869
+            },
+            {
+                "node_id": 5,
+                "position": -24.777236938476562
+            },
+            {
+                "node_id": 6,
+                "position": 0.008651357609778643
+            }
+        ]
+    },
+    {
+        "timestamp": "09:51:25.506",
+        "positions": [
+            {
+                "node_id": 1,
+                "position": 0.8902428746223449
+            },
+            {
+                "node_id": 2,
+                "position": -7.905000400543212
+            },
+            {
+                "node_id": 3,
+                "position": 65.35464477539062
+            },
+            {
+                "node_id": 4,
+                "position": -5.7028069496154785
+            },
+            {
+                "node_id": 5,
+                "position": -24.777992248535156
+            },
+            {
+                "node_id": 6,
+                "position": 0.00456581823527813
+            }
+        ]
+    }
+]

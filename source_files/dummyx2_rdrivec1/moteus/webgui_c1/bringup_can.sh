@@ -1,0 +1,6 @@
+#!/bin/sh
+#!/bin/bash
+sudo ip link set can0 down
+sudo ip link set can0 type can bitrate 1000000 dbitrate 5000000 fd on
+#sudo ip link set can0 txqueuelen 5000
+sudo ip link set can0 up
