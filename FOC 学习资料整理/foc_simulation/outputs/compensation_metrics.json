@@ -1,0 +1,18 @@
+{
+  "without_compensation": {
+    "velocity_rms_rad_s": 1.1457561442638358,
+    "position_rms_rad": 0.23262131418348972,
+    "velocity_peak_abs_rad_s": 3.2555412110005686,
+    "position_peak_abs_rad": 0.3639948979695824
+  },
+  "with_compensation": {
+    "velocity_rms_rad_s": 0.39350723999669773,
+    "position_rms_rad": 0.05618883673076694,
+    "velocity_peak_abs_rad_s": 0.81272789709082,
+    "position_peak_abs_rad": 0.10300372177991579
+  },
+  "improvement": {
+    "velocity_rms_ratio": 0.34344763671289896,
+    "position_rms_ratio": 0.2415463816288376
+  }
+}

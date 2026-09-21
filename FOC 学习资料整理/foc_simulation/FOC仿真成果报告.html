@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>FOC 电机控制建模与仿真阶段成果报告</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm;
+    }
+    body {
+      font-family: "Noto Sans CJK SC", "Noto Sans CJK", "Droid Sans Fallback", sans-serif;
+      color: #1f2933;
+      line-height: 1.55;
+      font-size: 11pt;
+    }
+    h1 {
+      text-align: center;
+      font-size: 23pt;
+      margin: 0 0 6mm 0;
+    }
+    h2 {
+      font-size: 16pt;
+      margin-top: 10mm;
+      padding-bottom: 1.5mm;
+      border-bottom: 1px solid #c8d0d8;
+    }
+    h3 {
+      font-size: 13pt;
+      margin-top: 6mm;
+    }
+    .meta {
+      text-align: center;
+      color: #596773;
+      margin-bottom: 8mm;
+    }
+    .summary {
+      background: #f4f7fb;
+      border-left: 4px solid #2b6cb0;
+      padding: 4mm 5mm;
+      margin: 4mm 0 8mm 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 4mm 0;
+      font-size: 10.5pt;
+    }
+    th, td {
+      border: 1px solid #cbd5df;
+      padding: 2mm 2.5mm;
+      vertical-align: top;
+    }
+    th {
+      background: #eef3f8;
+    }
+    code, pre {
+      font-family: "Noto Sans Mono CJK SC", "Noto Sans Mono CJK", monospace;
+      background: #f6f8fa;
+    }
+    pre {
+      padding: 3mm;
+      border: 1px solid #d8dee6;
+      white-space: pre-wrap;
+    }
+    figure {
+      margin: 7mm 0;
+      page-break-inside: avoid;
+    }
+    img {
+      width: 100%;
+      max-height: 135mm;
+      object-fit: contain;
+      border: 1px solid #d8dee6;
+    }
+    figcaption {
+      color: #465766;
+      font-size: 10pt;
+      text-align: center;
+      margin-top: 2mm;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .ok {
+      color: #137333;
+      font-weight: 700;
+    }
+    .warn {
+      color: #9a5b00;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <h1>FOC 电机控制建模与仿真阶段成果报告</h1>
+  <div class="meta">日期：2026-09-20 ｜ 项目路径：/home/ruihu/Desktop/yjj/FDC/FOC 学习资料整理/foc_simulation</div>
+
+  <div class="summary">
+    <strong>阶段结论：</strong>已完成 Python 离线仿真环境搭建，并跑通三相 FOC、SVPWM、速度闭环、电阻与电感辨识、摩擦与惯性辨识、摩擦/惯性前馈补偿验证。针对阶跃速度导致电流尖峰、摩擦拟合图中高频扰动不被模型跟随的问题，已追加平滑速度轨迹测试、力矩滤波趋势和残差图。本轮进一步加入轨迹规划、参数化 PI 整定、电压前馈解耦和模拟编码器测速，形成 baseline、smooth、precision 三种对比验证。当前结果说明算法链路和数据处理流程是闭合、可运行、可展示的；后续需要接入真实硬件数据验证模型参数与补偿效果。
+  </div>
+
+  <h2>1. 今日完成内容</h2>
+  <table>
+    <tr>
+      <th>模块</th>
+      <th>完成内容</th>
+      <th>对应代码</th>
+    </tr>
+    <tr>
+      <td>FOC 数学变换</td>
+      <td>实现 Clarke、Park、反 Park、电角度换算、三相与 alpha/beta 坐标转换。</td>
+      <td><code>src/foc_math.py</code></td>
+    </tr>
+    <tr>
+      <td>SVPWM</td>
+      <td>实现扇区判断、T1/T2/T0 计算、三相占空比 duty_a/b/c 输出。</td>
+      <td><code>src/svpwm.py</code></td>
+    </tr>
+    <tr>
+      <td>电机模型</td>
+      <td>实现简化 PMSM/BLDC dq 模型，包含 R、L、Kt、Ke、J、B、Fc、母线电压。</td>
+      <td><code>src/motor_model.py</code></td>
+    </tr>
+    <tr>
+      <td>闭环仿真</td>
+      <td>实现速度外环 + d/q 电流内环 + SVPWM + 电机模型的完整仿真主循环，并将速度测试从硬阶跃改为平滑速度轨迹。</td>
+      <td><code>src/simulator.py</code></td>
+    </tr>
+    <tr>
+      <td>参数辨识</td>
+      <td>实现 R/L 阶跃辨识、摩擦 Fc/B 辨识、惯量 J 辨识，并增加摩擦拟合残差评估。</td>
+      <td><code>src/identification.py</code></td>
+    </tr>
+    <tr>
+      <td>前馈补偿</td>
+      <td>实现摩擦和惯量前馈力矩计算，并换算为 q 轴电流前馈。</td>
+      <td><code>src/compensation.py</code></td>
+    </tr>
+    <tr>
+      <td>控制性能优化</td>
+      <td>新增轨迹规划、PI 参数化整定、d/q 电压前馈解耦、模拟编码器测速，并完成 baseline/smooth/precision 对比。</td>
+      <td><code>src/trajectory.py</code><br><code>src/tuning.py</code><br><code>src/estimators.py</code></td>
+    </tr>
+    <tr>
+      <td>位置三环控制</td>
+      <td>新增位置 P 环，形成位置环、速度环、电流环的完整级联控制，并完成位置轨迹跟踪验证。</td>
+      <td><code>src/simulator.py</code><br><code>examples/run_position_three_loop.py</code></td>
+    </tr>
+  </table>
+
+  <h2>2. 当前仿真电机设置</h2>
+  <p>当前虚拟电机参数参考 Drivex2/4310 资料，用于教学和算法验证，不代表最终真实硬件标定值。</p>
+  <table>
+    <tr><th>参数</th><th>数值</th><th>说明</th></tr>
+    <tr><td>极对数</td><td>14</td><td>机械角度转电角度时使用</td></tr>
+    <tr><td>相电阻 R</td><td>5.37 Ω</td><td>控制器配置中的标定相电阻</td></tr>
+    <tr><td>相电感 L</td><td>0.00326 H</td><td>即 3.26 mH</td></tr>
+    <tr><td>转矩常数 Kt</td><td>0.23 Nm/A</td><td>q 轴电流到电磁转矩的换算</td></tr>
+    <tr><td>反电动势常数 Ke</td><td>0.23 V/(rad/s)</td><td>速度引起的 q 轴反电动势</td></tr>
+    <tr><td>转动惯量 J</td><td>2.02e-5 kg·m²</td><td>机械加速度相关参数</td></tr>
+    <tr><td>粘滞摩擦 B</td><td>2.0e-4 Nm/(rad/s)</td><td>速度越大阻力越大</td></tr>
+    <tr><td>库仑摩擦 Fc</td><td>0.015 Nm</td><td>与运动方向相关的近似恒定摩擦</td></tr>
+    <tr><td>母线电压</td><td>24 V</td><td>SVPWM 和逆变桥电压来源</td></tr>
+  </table>
+
+  <h2>3. 仿真测试结果</h2>
+  <h3>3.1 SVPWM 占空比演示</h3>
+  <p>该测试验证 <code>Ualpha/Ubeta -> SVPWM -> duty_a/duty_b/duty_c</code> 的转换过程。三相占空比应周期变化、相互错开，并始终保持在 0 到 1 范围内。</p>
+  <figure>
+    <img src="outputs/svpwm_sector.png" alt="SVPWM 三相占空比曲线">
+    <figcaption>图 1：SVPWM 三相占空比。蓝色 duty_a，红色 duty_b，绿色 duty_c。</figcaption>
+  </figure>
+
+  <h3>3.2 速度闭环 FOC 响应</h3>
+  <p>该测试验证速度外环、电流内环、反 Park、SVPWM 和电机模型是否能形成稳定闭环。为避免硬阶跃目标带来不真实的无限加速度，本轮测试使用平滑速度轨迹：静止、平滑加速到 15 rad/s、保持、再平滑反转到 -8 rad/s。当前速度 RMS 误差约为 0.43245 rad/s，最终速度误差约为 -0.01212 rad/s。</p>
+  <figure>
+    <img src="outputs/velocity_response.png" alt="速度闭环响应">
+    <figcaption>图 2：速度闭环响应。蓝色为目标速度，红色为实际速度。</figcaption>
+  </figure>
+
+  <h3>3.3 d/q 电流环响应</h3>
+  <p>该测试验证电流环是否能让 Iq 跟踪目标转矩电流，并把 Id 压到接近 0。平滑轨迹下，目标 q 轴电流范围约为 -0.0905 A 到 0.0885 A，实际 q 轴电流范围约为 -0.0732 A 到 0.0792 A；Id 范围约为 -0.000209 A 到 0.000230 A，说明 d 轴电流基本被压住，FOC 解耦方向正确。</p>
+  <figure>
+    <img src="outputs/current_loop.png" alt="d/q 电流环响应">
+    <figcaption>图 3：d/q 电流环。蓝色 target_iq，红色 iq，绿色 id。</figcaption>
+  </figure>
+
+  <div class="page-break"></div>
+  <h2>4. 参数辨识结果</h2>
+  <h3>4.1 电阻与电感辨识</h3>
+  <p>R/L 辨识使用 RL 阶跃响应：</p>
+  <pre>i(t) = V/R * (1 - exp(-tR/L))</pre>
+  <p>稳态电流决定 R，电流上升速度决定 L。当前辨识结果如下：</p>
+  <table>
+    <tr><th>参数</th><th>辨识结果</th><th>评价</th></tr>
+    <tr><td>R</td><td>5.3700001679950855 Ω</td><td>与仿真设定 5.37 Ω 基本一致</td></tr>
+    <tr><td>L</td><td>0.003259999920566609 H</td><td>与仿真设定 3.26 mH 基本一致</td></tr>
+  </table>
+  <figure>
+    <img src="outputs/rl_identification.png" alt="R/L 辨识曲线">
+    <figcaption>图 4：R/L 辨识。蓝色为原始电流，红色为辨识参数重建的电流。</figcaption>
+  </figure>
+
+  <h3>4.2 摩擦与惯性辨识</h3>
+  <p>摩擦和惯性使用以下模型：</p>
+  <pre>tau = J * alpha + B * omega + Fc * sign(omega)</pre>
+  <p>恒速段用于拟合 Fc 和 B，加减速动态段用于拟合 J。原始仿真力矩中故意叠加了一个小的高频扰动，因此 J/B/Fc 模型不会跟随所有细小波纹；它主要拟合低频物理趋势。当前辨识结果如下：</p>
+  <table>
+    <tr><th>参数</th><th>辨识结果</th><th>说明</th></tr>
+    <tr><td>Fc</td><td>0.01497472545256575 Nm</td><td>库仑摩擦</td></tr>
+    <tr><td>B</td><td>0.00020824700560473909 Nm/(rad/s)</td><td>粘滞摩擦</td></tr>
+    <tr><td>J</td><td>2.0906066624351692e-05 kg·m²</td><td>转动惯量</td></tr>
+  </table>
+  <figure>
+    <img src="outputs/friction_fit.png" alt="摩擦与惯性拟合曲线">
+    <figcaption>图 5：摩擦与惯性拟合。蓝色为原始力矩，红色为滤波后的力矩趋势，绿色为 J/B/Fc 模型预测力矩。</figcaption>
+  </figure>
+  <p>残差指标：</p>
+  <table>
+    <tr><th>指标</th><th>数值</th><th>说明</th></tr>
+    <tr><td>原始残差 RMS</td><td>0.0004250125 Nm</td><td>包含人为高频扰动</td></tr>
+    <tr><td>滤波残差 RMS</td><td>0.0001524408 Nm</td><td>更接近低频趋势拟合误差</td></tr>
+    <tr><td>最大绝对残差</td><td>0.0006587849 Nm</td><td>原始残差峰值</td></tr>
+  </table>
+  <figure>
+    <img src="outputs/friction_residual.png" alt="摩擦与惯性拟合残差">
+    <figcaption>图 6：摩擦拟合残差。蓝色为原始残差，红色为滤波残差。</figcaption>
+  </figure>
+
+  <div class="page-break"></div>
+  <h2>5. 摩擦/惯性补偿验证</h2>
+  <p>补偿使用前馈力矩：</p>
+  <pre>tau_ff = J_hat * alpha_ref + B_hat * omega_ref + Fc_hat * tanh(omega_ref / eps)
+Iq_ff = tau_ff / Kt</pre>
+  <p>该前馈电流叠加到速度 PI 输出上，用来提前克服摩擦和惯性。当前对比结果：</p>
+  <table>
+    <tr><th>指标</th><th>无补偿</th><th>有补偿</th><th>改善</th></tr>
+    <tr><td>速度 RMS 误差</td><td>1.145756 rad/s</td><td>0.393507 rad/s</td><td class="ok">降到 34.3%</td></tr>
+    <tr><td>位置 RMS 误差</td><td>0.232621 rad</td><td>0.056189 rad</td><td class="ok">降到 24.2%</td></tr>
+    <tr><td>峰值速度误差</td><td>3.255541 rad/s</td><td>0.812728 rad/s</td><td class="ok">明显降低</td></tr>
+    <tr><td>峰值位置误差</td><td>0.363995 rad</td><td>0.103004 rad</td><td class="ok">明显降低</td></tr>
+  </table>
+  <figure>
+    <img src="outputs/compensation_compare.png" alt="前馈补偿对比">
+    <figcaption>图 7：补偿对比。蓝色目标速度，红色无补偿实际速度，绿色有补偿实际速度。</figcaption>
+  </figure>
+
+  <div class="page-break"></div>
+  <h2>6. 控制性能优化验证</h2>
+  <p>本轮控制性能优化参考 SimpleFOC 的 FOC 主流程，以及 moteus 的轨迹规划、级联控制和前馈思路。在原有 baseline 基础上，拆成两种优化目标：smooth 模式优先平滑轨迹和降低电流尖峰；precision 模式不重设目标速度，优先提高对原始速度命令的跟随精度。</p>
+  <table>
+    <tr><th>指标</th><th>baseline</th><th>smooth</th><th>precision</th><th>评价</th></tr>
+    <tr><td>相对原始命令的速度 RMS 误差</td><td>1.52965 rad/s</td><td>9.84285 rad/s</td><td>0.73683 rad/s</td><td class="ok">precision 降到 48.17%</td></tr>
+    <tr><td>相对自身目标的速度 RMS 误差</td><td>1.52965 rad/s</td><td>0.43334 rad/s</td><td>0.73683 rad/s</td><td>smooth 跟踪的是规划后目标</td></tr>
+    <tr><td>位置 RMS 误差</td><td>0.13127 rad</td><td>0.03053 rad</td><td>0.07239 rad</td><td>precision 比 baseline 降低</td></tr>
+    <tr><td>Iq 峰值</td><td>0.24797 A</td><td>0.08733 A</td><td>1.34576 A</td><td class="warn">precision 需要更大转矩电流</td></tr>
+    <tr><td>Id RMS</td><td>0.000765 A</td><td>0.000774 A</td><td>0.000001 A</td><td>d 轴电流仍接近 0</td></tr>
+    <tr><td>电压饱和比例</td><td>0</td><td>0</td><td>0.006%</td><td>precision 基本未触发限压</td></tr>
+  </table>
+  <figure>
+    <img src="outputs/control_optimization_compare.png" alt="控制性能优化速度对比">
+    <figcaption>图 8：目标速度跟随精度对比。蓝色原始速度命令，红色 baseline 实际速度，绿色 precision 实际速度。</figcaption>
+  </figure>
+  <figure>
+    <img src="outputs/trajectory_compare.png" alt="轨迹规划与反馈速度">
+    <figcaption>图 9：smooth 轨迹规划效果。蓝色原始命令速度，红色 smooth 规划目标速度，绿色 smooth 实际速度。</figcaption>
+  </figure>
+  <figure>
+    <img src="outputs/current_decoupling_compare.png" alt="电流解耦对比">
+    <figcaption>图 10：d/q 电流对比。蓝色 baseline Id，红色 precision Id，绿色 baseline Iq，紫色 precision Iq。</figcaption>
+  </figure>
+
+  <div class="page-break"></div>
+  <h2>7. 位置三环控制验证</h2>
+  <p>在速度环和电流环基础上，新增最外层位置 P 环，形成完整的“位置目标 -> 目标速度 -> 目标 Iq -> Vd/Vq -> SVPWM”级联控制。位置环输出会被速度限制约束，避免位置误差较大时给速度环过大的目标。</p>
+  <pre>theta_error = theta_target - theta_feedback
+omega_target = clamp(Kp_pos * theta_error + omega_ff, +/- omega_limit)</pre>
+  <table>
+    <tr><th>指标</th><th>结果</th><th>评价</th></tr>
+    <tr><td>位置 RMS 误差</td><td>0.01203 rad</td><td class="ok">目标位置和实际位置基本重合</td></tr>
+    <tr><td>速度 RMS 误差</td><td>0.21623 rad/s</td><td>速度环能跟随位置环输出</td></tr>
+    <tr><td>Iq 峰值</td><td>0.07037 A</td><td>当前位置轨迹下电流压力较小</td></tr>
+  </table>
+  <figure>
+    <img src="outputs/position_three_loop_response.png" alt="位置三环位置响应">
+    <figcaption>图 11：位置三环位置响应。蓝色目标位置，红色实际位置。</figcaption>
+  </figure>
+  <figure>
+    <img src="outputs/position_three_loop_velocity.png" alt="位置三环速度响应">
+    <figcaption>图 12：位置三环速度响应。蓝色位置环输出的目标速度，红色实际速度。</figcaption>
+  </figure>
+  <figure>
+    <img src="outputs/position_three_loop_current.png" alt="位置三环电流响应">
+    <figcaption>图 13：位置三环电流响应。蓝色目标 Iq，红色实际 Iq，绿色实际 Id。</figcaption>
+  </figure>
+
+  <h2>8. 当前结论与后续工作</h2>
+  <h3>8.1 当前结论</h3>
+  <ul>
+    <li><span class="ok">FOC/SVPWM 链路已跑通：</span>数学变换、扇区判断、占空比输出、闭环反馈均可运行。</li>
+    <li><span class="ok">速度闭环稳定：</span>速度响应能跟踪目标，Id 被压到接近 0。</li>
+    <li><span class="ok">位置三环已补齐：</span>位置 P 环、速度 PI 环、电流 PI 环可以形成完整级联闭环。</li>
+    <li><span class="ok">参数辨识流程有效：</span>R/L、Fc/B/J 均能从仿真数据中反推。</li>
+    <li><span class="ok">前馈补偿有效：</span>摩擦和惯量前馈显著降低速度与位置误差。</li>
+    <li><span class="ok">控制优化目标已区分：</span>smooth 适合平滑和低电流，precision 适合更精确跟随原始速度目标。</li>
+  </ul>
+
+  <h3>8.2 局限性</h3>
+  <p class="warn">当前仿真数据主要来自理想模型，因此结果说明“方法可行”，但不能直接等同于真实硬件性能。</p>
+  <ul>
+    <li>尚未加入 ADC 噪声、编码器量化误差、PWM 死区、MOS 压降和母线波动。</li>
+    <li>尚未考虑真实减速器间隙、齿槽转矩、温升导致的电阻变化。</li>
+    <li>真实硬件上需要重新采集数据并重新辨识参数。</li>
+  </ul>
+
+  <h3>8.3 下一步建议</h3>
+  <ol>
+    <li>在仿真中加入电流噪声、编码器噪声、负载突变和参数偏差，做鲁棒性测试。</li>
+    <li>定义真实硬件 CSV 字段：时间、位置、速度、Iq、Id、电压、温度、故障码。</li>
+    <li>设计低速恒速、高速恒速、正反向变速三类真实测试轨迹。</li>
+    <li>和固件侧确认是否能输出 Iq/Id、是否支持前馈电流或前馈力矩输入。</li>
+  </ol>
+</body>
+</html>

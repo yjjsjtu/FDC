@@ -1,0 +1,40 @@
+# Local Arduino distributions and toolchains
+/Arduino-1.8.19-DengFOC/
+/Arduino-1.8.19-DengFOC.zip
+/Arduino_Linux_环境/arduino-1.8.19/
+/Arduino_Linux_环境/build/
+/Arduino_Linux_环境/downloads/
+/Arduino_Linux_环境/simplefoc-studio-conda/
+/Arduino_Linux_环境/SimpleFOCStudio/
+
+# Downloaded archives and large vendor packages
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+*.xz
+
+# Browser/download helper captures. These may contain local cookies or
+# temporary page scripts and should not be shared in Git.
+*cookies*
+/Deng-s-foc-controller-master/Arduino_IDE_整合包下载/
+/Deng-s-foc-controller-master/百度网盘客户端/
+
+# Large third-party source extracts kept locally as reference material.
+# Re-download them from the documented upstream sources when needed.
+/FOC 学习资料整理/acuator-release/source_files/moteus/
+/FOC 学习资料整理/acuator-release/source_files/dummyx2_rdrivec1.tar.gz
+
+# Generated simulation data and Python caches
+/FOC 学习资料整理/foc_simulation/data/*.csv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~

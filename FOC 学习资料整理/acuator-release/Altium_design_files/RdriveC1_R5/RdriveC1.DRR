@@ -1,0 +1,21 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: RdriveC1.PcbDoc   4/16/2026  4:09:47 PM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : RdriveC1.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      0.254mm (10mil)                                           Round             201       PTH        364.58mm (14.35inch)
+T2      0.3mm (12mil)                                             Round             5         PTH        40.21mm (1.58inch)
+T3      0.6mm (24mil)                                             Round             2         PTH        1.27mm (0.05inch)
+T4      0.8mm (31mil)                                             Round             2         PTH        1.50mm (0.06inch)
+T5      0.9mm (35mil)                                             Round             3         PTH        5.08mm (0.20inch)
+T6      1.6mm (63mil)                                             Round             3         PTH        14.44mm (0.57inch)
+T7      2.6mm (102mil)                                            Round             4         PTH        106.07mm (4.18inch)
+T8      2.8mm (110mil)                                            Round             4         PTH        45.76mm (1.80inch)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              224
+
+Total Processing Time (hh:mm:ss) : 00:00:00

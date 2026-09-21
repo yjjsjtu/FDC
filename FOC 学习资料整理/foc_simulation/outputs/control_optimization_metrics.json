@@ -1,0 +1,60 @@
+{
+  "baseline": {
+    "velocity_rms_rad_s": 1.529651176683971,
+    "position_rms_rad": 0.13126755091448514,
+    "velocity_peak_abs_rad_s": 22.974120576641443,
+    "position_peak_abs_rad": 0.1708904417668613,
+    "id_rms_a": 0.0007653733334288097,
+    "iq_rms_a": 0.0715995902954086,
+    "iq_peak_abs_a": 0.24797446229186593,
+    "target_iq_peak_abs_a": 1.188118177972714,
+    "voltage_saturation_ratio": 0.0,
+    "settling_time_s": 2.12845,
+    "command_velocity_rms_rad_s": 1.529651176683971,
+    "command_velocity_peak_abs_rad_s": 22.974120576641443,
+    "trajectory_shaping_rms_rad_s": 0.0
+  },
+  "smooth": {
+    "velocity_rms_rad_s": 0.4333364669270288,
+    "position_rms_rad": 0.030530725780712708,
+    "velocity_peak_abs_rad_s": 2.178959091739381,
+    "position_peak_abs_rad": 0.056049160461473235,
+    "id_rms_a": 0.0007743867561381241,
+    "iq_rms_a": 0.06621233081586927,
+    "iq_peak_abs_a": 0.08732551270549911,
+    "target_iq_peak_abs_a": 0.1004681055861347,
+    "voltage_saturation_ratio": 0.0,
+    "settling_time_s": 2.275,
+    "command_velocity_rms_rad_s": 9.842853940908176,
+    "command_velocity_peak_abs_rad_s": 22.99513210792063,
+    "trajectory_shaping_rms_rad_s": 9.796853454241763
+  },
+  "precision": {
+    "velocity_rms_rad_s": 0.7368308214654627,
+    "position_rms_rad": 0.07239272202487003,
+    "velocity_peak_abs_rad_s": 22.848943003751028,
+    "position_peak_abs_rad": 0.09590441391169335,
+    "id_rms_a": 9.85578462934904e-07,
+    "iq_rms_a": 0.08161549612009879,
+    "iq_peak_abs_a": 1.345761773831408,
+    "target_iq_peak_abs_a": 1.6485285983814393,
+    "voltage_saturation_ratio": 6.250130211046063e-05,
+    "settling_time_s": 2.0847,
+    "command_velocity_rms_rad_s": 0.7368308214654627,
+    "command_velocity_peak_abs_rad_s": 22.848943003751028,
+    "trajectory_shaping_rms_rad_s": 0.0
+  },
+  "gains": {
+    "current_kp": 6.144955230421635,
+    "current_ki": 10122.211529866314,
+    "smooth_velocity_kp": 0.018996227632091283,
+    "smooth_velocity_ki": 1.3868939749704696,
+    "precision_velocity_kp": 0.075,
+    "precision_velocity_ki": 0.8
+  },
+  "improvement": {
+    "smooth_target_velocity_rms_ratio": 0.2832910362390137,
+    "precision_command_velocity_rms_ratio": 0.481698594226423,
+    "precision_iq_peak_ratio": 5.42701761057736
+  }
+}

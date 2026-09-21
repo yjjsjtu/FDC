@@ -1,0 +1,643 @@
+*************************************************************
+FileName = RdriveC1.GBR
+AutoAperture = True
+*************************************************************
+Generating : Top Layer
+      File : RdriveC1.GTL
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D11
+    D12
+    D13
+    D22
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+    D44
+    D45
+    D46
+    D80
+    D81
+    D82
+    D83
+    D84
+    D85
+    D86
+    D87
+    D88
+    D89
+    D90
+    D91
+    D92
+    D93
+    D94
+    D95
+    D96
+    D97
+    D98
+    D99
+    D100
+    D101
+    D102
+    D103
+    D104
+    D105
+*************************************************************
+
+*************************************************************
+Generating : GND
+      File : RdriveC1.G2
+
+    Adding Layer      : GND
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D94
+    D98
+    D104
+    D105
+*************************************************************
+
+*************************************************************
+Generating : Bottom Layer
+      File : RdriveC1.GBL
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D11
+    D12
+    D13
+    D25
+    D26
+    D29
+    D38
+    D41
+    D90
+    D94
+    D95
+    D96
+    D97
+    D98
+    D99
+    D100
+    D101
+    D102
+    D103
+    D104
+    D105
+    D106
+    D107
+*************************************************************
+
+*************************************************************
+Generating : Bottom Pad Master
+      File : RdriveC1.GPB
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D25
+    D26
+    D29
+    D38
+    D41
+    D94
+    D95
+    D96
+    D97
+    D98
+    D99
+    D100
+    D101
+    D102
+    D103
+    D106
+    D107
+*************************************************************
+
+*************************************************************
+Generating : S1
+      File : RdriveC1.G1
+
+    Adding Layer      : S1
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D11
+    D12
+    D13
+    D94
+    D95
+    D99
+    D100
+    D101
+    D104
+    D105
+*************************************************************
+
+*************************************************************
+Generating : Bottom Paste
+      File : RdriveC1.GBP
+
+    Adding Layer      : Bottom Paste
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D25
+    D26
+    D29
+    D38
+    D41
+    D106
+    D107
+*************************************************************
+
+*************************************************************
+Generating : Keep-Out Layer
+      File : RdriveC1.GKO
+
+    Adding Layer      : Keep-Out Layer
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 1
+      File : RdriveC1.GM1
+
+    Adding Layer      : Mechanical 1
+
+
+Used DCodes :
+    D10
+    D108
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 13
+      File : RdriveC1.GM13
+
+    Adding Layer      : Mechanical 13
+
+
+Used DCodes :
+    D16
+    D109
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 15
+      File : RdriveC1.GM15
+
+    Adding Layer      : Mechanical 15
+
+
+Used DCodes :
+    D13
+    D16
+    D19
+    D20
+    D109
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 16
+      File : RdriveC1.GM16
+
+    Adding Layer      : Mechanical 16
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 2
+      File : RdriveC1.GM2
+
+    Adding Layer      : Mechanical 2
+
+
+Used DCodes :
+    D10
+    D13
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 6
+      File : RdriveC1.GM6
+
+    Adding Layer      : Mechanical 6
+
+
+Used DCodes :
+    D11
+    D109
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 7
+      File : RdriveC1.GM7
+
+    Adding Layer      : Mechanical 7
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 8
+      File : RdriveC1.GM8
+
+    Adding Layer      : Mechanical 8
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 3
+      File : RdriveC1.GM3
+
+    Adding Layer      : Mechanical 3
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Top Solder
+      File : RdriveC1.GTS
+
+    Adding Layer      : Top Solder
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D27
+    D28
+    D30
+    D32
+    D34
+    D35
+    D36
+    D40
+    D47
+    D48
+    D49
+    D50
+    D51
+    D52
+    D53
+    D54
+    D55
+    D56
+    D57
+    D58
+    D59
+    D60
+    D61
+    D62
+    D63
+    D64
+    D65
+    D66
+    D67
+    D68
+    D69
+    D70
+    D71
+    D72
+    D73
+    D74
+    D75
+    D76
+    D77
+    D78
+    D79
+*************************************************************
+
+*************************************************************
+Generating : Bottom Solder
+      File : RdriveC1.GBS
+
+    Adding Layer      : Bottom Solder
+
+    Adding Layer      : Bottom Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D50
+    D51
+    D52
+    D58
+    D60
+    D69
+    D70
+    D71
+    D72
+    D73
+    D74
+    D75
+    D76
+    D77
+    D78
+    D79
+    D106
+    D107
+*************************************************************
+
+*************************************************************
+Generating : Bottom Overlay
+      File : RdriveC1.GBO
+
+    Adding Layer      : Bottom Overlay
+
+
+Used DCodes :
+    D12
+    D13
+    D15
+    D16
+    D19
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 9
+      File : RdriveC1.GM9
+
+    Adding Layer      : Mechanical 9
+
+
+Used DCodes :
+    D14
+*************************************************************
+
+*************************************************************
+Generating : Top Paste
+      File : RdriveC1.GTP
+
+    Adding Layer      : Top Paste
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D22
+    D23
+    D24
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+    D44
+    D45
+    D46
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 10
+      File : RdriveC1.GM10
+
+    Adding Layer      : Mechanical 10
+
+
+Used DCodes :
+    D13
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 11
+      File : RdriveC1.GM11
+
+    Adding Layer      : Mechanical 11
+
+
+Used DCodes :
+    D15
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 12
+      File : RdriveC1.GM12
+
+    Adding Layer      : Mechanical 12
+
+
+Used DCodes :
+    D13
+*************************************************************
+
+*************************************************************
+Generating : Dielectric 2
+      File : RdriveC1.3
+
+    Adding Layer      : Dielectric 2
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Dielectric 4
+      File : RdriveC1.4
+
+    Adding Layer      : Dielectric 4
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Top Overlay
+      File : RdriveC1.GTO
+
+    Adding Layer      : Top Overlay
+
+
+Used DCodes :
+    D10
+    D11
+    D12
+    D13
+    D14
+    D15
+    D16
+    D17
+    D18
+    D19
+    D20
+    D21
+*************************************************************
+
+*************************************************************
+Generating : Top Pad Master
+      File : RdriveC1.GPT
+
+    Adding Layer      : Top Layer
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D22
+    D25
+    D26
+    D27
+    D28
+    D29
+    D30
+    D31
+    D32
+    D33
+    D34
+    D35
+    D36
+    D37
+    D38
+    D39
+    D40
+    D41
+    D42
+    D43
+    D44
+    D45
+    D46
+    D80
+    D81
+    D82
+    D83
+    D84
+    D85
+    D86
+    D87
+    D94
+    D95
+    D96
+    D97
+    D98
+    D99
+    D100
+    D101
+    D102
+    D103
+*************************************************************
+
+*************************************************************
+Generating : Mechanical 14
+      File : RdriveC1.GM14
+
+    Adding Layer      : Mechanical 14
+
+
+Used DCodes :
+    D109
+*************************************************************
+
+*************************************************************
+Generating : Multi-Layer
+      File : RdriveC1.GML
+
+    Adding Layer      : Multi-Layer
+
+
+Used DCodes :
+    D94
+    D95
+    D96
+    D97
+    D98
+    D99
+    D100
+    D101
+    D102
+    D103
+*************************************************************
+
+*************************************************************
+Generating : Dielectric 1
+      File : RdriveC1.1
+
+    Adding Layer      : Dielectric 1
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Dielectric 3
+      File : RdriveC1.2
+
+    Adding Layer      : Dielectric 3
+
+
+Used DCodes :
+*************************************************************
+
+*************************************************************
+Generating : Profile
+      File : RdriveC1.GM
+
+
+Used DCodes :
+    D110
+*************************************************************
+
